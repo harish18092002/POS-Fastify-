@@ -1,5 +1,5 @@
 import Fastify from 'fastify';
-import { ICreateOrder } from './routes/interface';
+import { IOrderInterface } from './routes/interface';
 import { generateID } from '@jetit/id';
 import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
 import { PrismaClient } from '@prisma/client';
@@ -20,22 +20,18 @@ fastify.route({
     console.log(request.body);
     response
       .status(200)
-      .send(route.createOrder.callBack(request.body as ICreateOrder));
+      .send(route.createOrder.callBack(request.body as IOrderInterface));
   },
 });
 
-function createOrder(data: ICreateOrder) {
+function createOrder(data: IOrderInterface) {
   const ps = prismaClientAssign();
   try {
     const createOrder = async () => {
-      const create = await ps.item.create({
+      const create = await ps.orderDetails.create({
         data: {
-          itemId: generateID('HEX'),
-          name: data.name,
-          description: data.description,
-          quantity: data.quantity,
-          tax: data.tax,
-          amount: data.amount,
+          orderId: generateID('HEX'),
+          status: data.status,
         },
       });
       return createOrder;

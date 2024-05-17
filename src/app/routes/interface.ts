@@ -1,16 +1,17 @@
 export interface IOrderInterface {
   orederId: string;
-  name: string;
-  quantity: string;
-  amount: string;
+  orderedItem: IItemInterface;
   status: 'ACCEPTED' | 'CANCELLED';
 }
 
-export interface ICreateOrder {
-  id: string;
+export interface IItemInterface {
+  itemId: string;
   name: string;
   description: string;
   quantity: string;
-  tax: string;
+  tax: ITaxInterface;
   amount: string;
+}
+export interface ITaxInterface {
+  tax: string;
 }

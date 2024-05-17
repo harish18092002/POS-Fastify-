@@ -13,11 +13,11 @@ datasource db {
   url      = env("POS_DATABASE_URL")
 }
 
-model OrderDetais {
-  createdAt   DateTime    @default(now()) @map("created_at")
-  orderId     String      @id @map("order_id")
-  status      orderStatus
-  orderedItem Item        @relation(fields: [orderId], references: [itemId])
+model OrderDetails {
+  createdAt DateTime    @default(now()) @map("created_at")
+  orderId   String      @id @map("order_id")
+  status    orderStatus
+  Item      Item[]
 }
 
 enum orderStatus {
@@ -26,18 +26,25 @@ enum orderStatus {
 }
 
 model Item {
-  orderId     String
-  name        String
-  itemId      String        @id @map("item_Id")
-  description String
-  quantity    String
-  tax         Tax           @relation(fields: [itemId], references: [itemId])
-  amount      String
-  OrderDetais OrderDetais[]
+  orderId      String
+  name         String
+  itemId       String       @id @map("item_Id")
+  description  String
+  quantity     String
+  amount       String
+  orderDetalis OrderDetails @relation(fields: [itemId], references: [orderId])
+  tax          Tax[]
 }
 
 model Tax {
-  tax    String
-  itemId String @id
-  Item   Item[]
+  taxId   String  @id
+  taxType taxtype @map("tax_type")
+  itemId  String
+  Item    Item    @relation(fields: [taxId], references: [itemId])
+}
+
+enum taxtype {
+  GST
+  VAT
+  SGST
 }
