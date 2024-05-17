@@ -11,12 +11,12 @@
   "dependencies": {
     "@fastify/autoload": "~5.7.1",
     "@fastify/sensible": "~5.2.0",
+    "@jetit/id": "^0.0.12",
     "@prisma/client": "^5.14.0",
     "axios": "^1.6.0",
     "fastify": "~4.13.0",
     "fastify-plugin": "~4.5.0",
-    "tslib": "^2.3.0",
-    "@jetit/id": "^0.0.12"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@nx/esbuild": "19.0.4",

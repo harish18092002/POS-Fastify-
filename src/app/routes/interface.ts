@@ -1,3 +1,11 @@
+export interface IOrderInterface {
+  orederId: string;
+  name: string;
+  quantity: string;
+  amount: string;
+  status: 'ACCEPTED' | 'CANCELLED';
+}
+
 export interface ICreateOrder {
   id: string;
   name: string;
@@ -5,12 +13,4 @@ export interface ICreateOrder {
   quantity: string;
   tax: string;
   amount: string;
-}
-
-export interface IOrderInterface {
-  orederId: string;
-  name: string;
-  quantity: string;
-  amount: string;
-  status: 'ACCEPTED' | 'CANCELLED';
 }

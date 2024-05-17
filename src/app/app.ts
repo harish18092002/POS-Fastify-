@@ -1,12 +1,12 @@
-import * as path from 'path';
 import Fastify from 'fastify';
 import { ICreateOrder } from './routes/interface';
 import { generateID } from '@jetit/id';
-import prismaPlugin from 'src/assets/prisma/prisma';
+import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
+import { PrismaClient } from '@prisma/client';
+
 export const fastify = Fastify();
 
 fastify.register(prismaPlugin);
-
 const route = {
   createOrder: {
     url: '/create/order',
@@ -25,17 +25,22 @@ fastify.route({
 });
 
 function createOrder(data: ICreateOrder) {
-  const createOrder = async () => {
-    const create = await {
-      data: {
-        id: generateID('HEX'),
-        name: data.name,
-        description: data.description,
-        quantity: data.quantity,
-        tax: data.tax,
-        amount: data.amount,
-      },
+  const ps = prismaClientAssign();
+  try {
+    const createOrder = async () => {
+      const create = await ps.item.create({
+        data: {
+          itemId: generateID('HEX'),
+          name: data.name,
+          description: data.description,
+          quantity: data.quantity,
+          tax: data.tax,
+          amount: data.amount,
+        },
+      });
+      return createOrder;
     };
-    return createOrder;
-  };
+  } catch (error) {
+    return error;
+  }
 }
