@@ -17,7 +17,7 @@ model OrderDetails {
   createdAt DateTime    @default(now()) @map("created_at")
   orderId   String      @id @map("order_id")
   status    orderStatus
-  Item      Item[]
+  item      Item[]
 }
 
 enum orderStatus {
@@ -32,7 +32,7 @@ model Item {
   description  String
   quantity     String
   amount       String
-  orderDetalis OrderDetails @relation(fields: [itemId], references: [orderId])
+  orderDetails OrderDetails @relation(fields: [itemId], references: [orderId])
   tax          Tax[]
 }
 
@@ -40,7 +40,7 @@ model Tax {
   taxId   String  @id
   taxType taxtype @map("tax_type")
   itemId  String
-  Item    Item    @relation(fields: [taxId], references: [itemId])
+  item    Item    @relation(fields: [taxId], references: [itemId])
 }
 
 enum taxtype {

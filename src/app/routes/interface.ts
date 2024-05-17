@@ -1,6 +1,6 @@
 export interface IOrderInterface {
   orederId: string;
-  orderedItem: IItemInterface;
+  item: [IItemInterface];
   status: 'ACCEPTED' | 'CANCELLED';
 }
 
@@ -13,5 +13,6 @@ export interface IItemInterface {
   amount: string;
 }
 export interface ITaxInterface {
-  tax: string;
+  gst: string;
+  sgst: string;
 }
