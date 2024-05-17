@@ -13,6 +13,7 @@ export interface IItemInterface {
   amount: string;
 }
 export interface ITaxInterface {
-  gst: string;
-  sgst: string;
+  taxId: string;
+  taxtype: 'GST' | 'VAT';
+  taxAmount: string;
 }

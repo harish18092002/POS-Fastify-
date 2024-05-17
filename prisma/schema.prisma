@@ -37,14 +37,14 @@ model Item {
 }
 
 model Tax {
-  taxId   String  @id
-  taxType taxtype @map("tax_type")
-  itemId  String
-  item    Item    @relation(fields: [taxId], references: [itemId])
+  taxId     String  @id
+  taxType   taxType @map("tax_type")
+  itemId    String
+  taxAmount String  @map("tax_amount")
+  item      Item    @relation(fields: [taxId], references: [itemId])
 }
 
-enum taxtype {
+enum taxType {
   GST
   VAT
-  SGST
 }
