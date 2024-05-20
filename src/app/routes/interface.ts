@@ -1,6 +1,6 @@
 export interface IOrderInterface {
   orederId: string;
-  item: [IItemInterface];
+  item: Array<IItemInterface>;
   status: 'ACCEPTED' | 'CANCELLED';
 }
 
@@ -9,11 +9,11 @@ export interface IItemInterface {
   name: string;
   description: string;
   quantity: string;
-  tax: ITaxInterface;
+  tax: Array<ITaxInterface>;
   amount: string;
 }
 export interface ITaxInterface {
   taxId: string;
-  taxtype: 'GST' | 'VAT';
+  taxType: 'GST' | 'VAT';
   taxAmount: string;
 }
