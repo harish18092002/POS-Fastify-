@@ -2,6 +2,8 @@ import Fastify from 'fastify';
 import { IOrderInterface } from './routes/interface';
 import { generateID } from '@jetit/id';
 import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
+import { table } from 'console';
+import { it } from 'node:test';
 
 export const fastify = Fastify();
 
@@ -92,56 +94,61 @@ const route1 = {
 fastify.route({
   method: 'POST',
   url: route1.getOrder.url,
-  handler: (request, response) => {
-    console.log(request.body);
-    response
-      .status(200)
-      .send(route1.getOrder.callBack(request.body as IOrderInterface));
+  handler: async (request, response) => {
+    try {
+      const result = await route1.getOrder.callBack(
+        request.body as IOrderInterface
+      );
+      response.status(200).send(result);
+    } catch (error) {
+      response.status(500).send({ error: 'Failed to fetch order' });
+    }
   },
 });
+
 async function getOrder(data: IOrderInterface) {
   console.log(data);
   const ps = prismaClientAssign();
   try {
-    const orderDetail = await ps.orderDetails.findFirst({
-      where: {
-        orderId: data.orderId,
-      },
-    });
-
-    const itemData = await ps.item.findMany({
-      where: {
-        orderId: data.orderId,
-      },
-    });
-
-    for (const tax of itemData) {
-      const taxData = await ps.tax.findFirst({
+    const [orderDetails, items] = await ps.$transaction([
+      ps.orderDetails.findFirst({
         where: {
-          itemId: tax.itemId,
+          orderId: data.orderId,
         },
-      });
-      console.log(taxData);
+      }),
+      ps.item.findMany({
+        where: {
+          orderId: data.orderId,
+        },
+      }),
+    ]);
+
+    if (!orderDetails) {
+      throw new Error('Order not found');
     }
 
-    console.log(orderDetail);
-    console.log(itemData);
+    const itemsWithTaxes = await Promise.all(
+      items.map(async (item) => {
+        const taxes = await ps.tax.findMany({
+          where: {
+            itemId: item.itemId,
+          },
+        });
+        return { ...item, taxes };
+      })
+    );
 
-    if (!orderDetail) {
-      return {
-        status: 'ERROR',
-        orderId: data.orderId,
-        message: 'Order Id not found',
-      };
-    }
-    return {
-      status: 'SUCCESS',
-      orderId: orderDetail,
-      message: 'Order Id found',
+    // Construct the response
+    const response = {
+      ...orderDetails,
+      items: itemsWithTaxes,
     };
+
+    console.log(response);
+    return response;
   } catch (error) {
     console.log(error);
-    return error;
+    return { error: 'Failed to fetch order' };
   }
 }
 export const fastifyServer = fastify;
