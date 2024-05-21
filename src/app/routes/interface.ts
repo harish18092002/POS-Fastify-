@@ -1,5 +1,5 @@
 export interface IOrderInterface {
-  orederId: string;
+  orderId: string;
   item: Array<IItemInterface>;
   status: 'ACCEPTED' | 'CANCELLED';
 }

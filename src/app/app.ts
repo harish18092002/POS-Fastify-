@@ -25,14 +25,15 @@ fastify.route({
   },
 });
 
+// create order
 async function createOrder(data: IOrderInterface) {
   const ps = prismaClientAssign();
-  const oId = generateID('HEX');
+  const oId = generateID('HEX', '01');
 
   try {
     await ps.$transaction(async (prisma) => {
-      console.log('Creating order with ID:', oId);
-      await prisma.orderDetails.create({
+      // const transaction = ps.$transaction([])
+      prisma.orderDetails.create({
         data: {
           orderId: oId,
           status: data.status,
@@ -41,7 +42,6 @@ async function createOrder(data: IOrderInterface) {
 
       const itemPromises = data.item.map(async (item) => {
         const itemId = generateID('HEX');
-        console.log('Creating item with ID:', itemId);
         await prisma.item.create({
           data: {
             orderId: oId,
@@ -55,7 +55,6 @@ async function createOrder(data: IOrderInterface) {
 
         const taxPromises = item.tax.map(async (tax) => {
           const taxId = generateID('HEX');
-          console.log('Creating tax with ID:', taxId);
           await prisma.tax.create({
             data: {
               taxId: taxId,
@@ -78,4 +77,68 @@ async function createOrder(data: IOrderInterface) {
   }
 }
 
+//  get order
+
+const route1 = {
+  getOrder: {
+    url: '/get/order',
+    callBack: getOrder,
+  },
+};
+
+fastify.route({
+  method: 'POST',
+  url: route1.getOrder.url,
+  handler: (request, response) => {
+    console.log(request.body);
+    response
+      .status(200)
+      .send(route1.getOrder.callBack(request.body as IOrderInterface));
+  },
+});
+async function getOrder(data: IOrderInterface) {
+  console.log(data);
+  const ps = prismaClientAssign();
+  try {
+    const orderDetail = await ps.orderDetails.findFirst({
+      where: {
+        orderId: data.orderId,
+      },
+    });
+
+    const itemData = await ps.item.findMany({
+      where: {
+        orderId: data.orderId,
+      },
+    });
+
+    for (const tax of itemData) {
+      const taxData = await ps.tax.findFirst({
+        where: {
+          itemId: tax.itemId,
+        },
+      });
+      console.log(taxData);
+    }
+
+    console.log(orderDetail);
+    console.log(itemData);
+
+    if (!orderDetail) {
+      return {
+        status: 'ERROR',
+        orderId: data.orderId,
+        message: 'Order Id not found',
+      };
+    }
+    return {
+      status: 'SUCCESS',
+      orderId: orderDetail,
+      message: 'Order Id found',
+    };
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
 export const fastifyServer = fastify;
