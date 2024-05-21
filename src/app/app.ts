@@ -21,7 +21,8 @@ fastify.route({
     console.log(request.body);
     response
       .status(200)
-      .send(route.createOrder.callBack(request.body as IOrderInterface));
+      .send(route.createOrder.callBack(request.body as IOrderInterface))
+      .send({ status: 'success', message: 'data created successfully' });
   },
 });
 
@@ -29,20 +30,21 @@ fastify.route({
 async function createOrder(data: IOrderInterface) {
   const ps = prismaClientAssign();
   const oId = generateID('HEX', '01');
+  const arr = [];
 
   try {
-    await ps.$transaction(async (prisma) => {
-      // const transaction = ps.$transaction([])
-      prisma.orderDetails.create({
+    arr.push(
+      ps.orderDetails.create({
         data: {
           orderId: oId,
           status: data.status,
         },
-      });
-
-      const itemPromises = data.item.map(async (item) => {
-        const itemId = generateID('HEX');
-        await prisma.item.create({
+      })
+    );
+    data.item.forEach((item) => {
+      const itemId = generateID('HEX', '02');
+      arr.push(
+        ps.item.create({
           data: {
             orderId: oId,
             itemId: itemId,
@@ -51,26 +53,27 @@ async function createOrder(data: IOrderInterface) {
             quantity: item.quantity,
             amount: item.amount,
           },
-        });
+        })
+      );
 
-        const taxPromises = item.tax.map(async (tax) => {
-          const taxId = generateID('HEX');
-          await prisma.tax.create({
+      item.tax.forEach((tax) => {
+        arr.push(
+          ps.tax.create({
             data: {
-              taxId: taxId,
+              taxId: generateID('HEX', '03'),
               itemId: itemId,
               taxType: tax.taxType,
               taxAmount: tax.taxAmount,
             },
-          });
-        });
-        await Promise.all(taxPromises);
+          })
+        );
       });
-      await Promise.all(itemPromises);
     });
 
+    const transaction = await ps.$transaction(arr);
+
     console.log('Order created successfully');
-    return { success: true, orderId: oId };
+    return { success: true, data: transaction };
   } catch (error) {
     console.error('Failed to create order:', error);
     throw new Error('Failed to create order');
