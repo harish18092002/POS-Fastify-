@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -27,12 +21,12 @@ enum orderStatus {
 
 model Item {
   orderId      String
-  name         String
   itemId       String       @id @map("item_Id")
+  name         String
   description  String
   quantity     String
   amount       String
-  orderDetails OrderDetails @relation(fields: [itemId], references: [orderId])
+  orderDetails OrderDetails @relation(fields: [orderId], references: [orderId])
   tax          Tax[]
 }
 
@@ -41,7 +35,7 @@ model Tax {
   taxType   taxType @map("tax_type")
   itemId    String
   taxAmount String  @map("tax_amount")
-  item      Item    @relation(fields: [taxId], references: [itemId])
+  item      Item    @relation(fields: [itemId], references: [itemId])
 }
 
 enum taxType {
