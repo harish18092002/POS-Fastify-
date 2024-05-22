@@ -63,6 +63,7 @@ async function createOrder(data: IOrderInterface) {
           ps.tax.create({
             data: {
               taxId: generateID('HEX', '03'),
+              orderId: oId,
               itemId: itemId,
               taxType: tax.taxType,
               taxAmount: tax.taxAmount,
@@ -91,35 +92,24 @@ const route1 = {
   },
 };
 
-fastify.route({
-  method: 'POST',
-  url: route1.getOrder.url,
-  handler: async (request, response) => {
-    try {
-      const result = await route1.getOrder.callBack(
-        request.body as IOrderInterface
-      );
-      response.status(200).send(result);
-    } catch (error) {
-      response.status(500).send({ error: 'Failed to fetch order' });
-    }
-  },
+fastify.post('/get/order', async (request, response) => {
+  try {
+    const result = await getOrder(request.body as IOrderInterface);
+    response.status(200).send(result);
+  } catch (error) {
+    response.status(500).send({ error: 'Failed to fetch order' });
+  }
 });
 
 async function getOrder(data: IOrderInterface) {
-  console.log(data);
   const ps = prismaClientAssign();
   try {
-    const [orderDetails, items] = await ps.$transaction([
+    const orderDetails = await ps.$transaction([
       ps.orderDetails.findFirst({
-        where: {
-          orderId: data.orderId,
-        },
+        where: { orderId: data.orderId },
       }),
       ps.item.findMany({
-        where: {
-          orderId: data.orderId,
-        },
+        where: { orderId: data.orderId },
       }),
     ]);
 
@@ -128,27 +118,22 @@ async function getOrder(data: IOrderInterface) {
     }
 
     const itemsWithTaxes = await Promise.all(
-      items.map(async (item) => {
+      orderDetails[1].map(async (item) => {
         const taxes = await ps.tax.findMany({
-          where: {
-            itemId: item.itemId,
-          },
+          where: { itemId: item.itemId },
         });
         return { ...item, taxes };
       })
     );
-
-    // Construct the response
-    const response = {
+    console.log(itemsWithTaxes);
+    return {
       ...orderDetails,
       items: itemsWithTaxes,
     };
-
-    console.log(response);
-    return response;
   } catch (error) {
-    console.log(error);
-    return { error: 'Failed to fetch order' };
+    console.error(error);
+    throw new Error('Failed to fetch order');
   }
 }
+
 export const fastifyServer = fastify;
