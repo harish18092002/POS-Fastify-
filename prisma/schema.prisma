@@ -8,11 +8,12 @@ datasource db {
 }
 
 model OrderDetails {
-  createdAt DateTime    @default(now()) @map("created_at")
-  orderId   String      @id @map("order_id")
-  status    orderStatus
-  item      Item[]
-  Tax       Tax[]
+  totalAmount String      @map("total_amount")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  orderId     String      @id @map("order_id")
+  status      orderStatus
+  item        Item[]
+  Tax         Tax[]
 }
 
 enum orderStatus {

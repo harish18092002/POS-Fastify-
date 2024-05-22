@@ -7,7 +7,7 @@ export function itemValidator(data: IOrderInterface) {
     quantityValidator(items.quantity);
     amountValidator(items.amount);
 
-    items.tax.forEach((tax) => {
+    items.tax.map((tax) => {
       taxTypeValidator(tax.taxType);
       taxAmountValidator(tax.taxAmount);
     });

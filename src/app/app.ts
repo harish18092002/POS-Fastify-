@@ -120,6 +120,11 @@ async function getOrder(data: IOrderInterface) {
       orderDetails[1].map(async (item) => {
         const taxes = await ps.tax.findMany({
           where: { itemId: item.itemId },
+          select: {
+            taxId: true,
+            taxAmount: true,
+            taxType: true,
+          },
         });
         return { ...item, taxes };
       })
