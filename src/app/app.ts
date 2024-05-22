@@ -2,33 +2,19 @@ import Fastify from 'fastify';
 import { IOrderInterface } from './routes/interface';
 import { generateID } from '@jetit/id';
 import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
-import { table } from 'console';
-import { it } from 'node:test';
 
 export const fastify = Fastify();
 
 fastify.register(prismaPlugin);
 
-const route = {
-  createOrder: {
-    url: '/create/order',
-    callBack: createOrder,
-  },
-};
-
-fastify.route({
-  method: 'POST',
-  url: route.createOrder.url,
-  handler: (request, response) => {
-    console.log(request.body);
-    response
-      .status(200)
-      .send(route.createOrder.callBack(request.body as IOrderInterface))
-      .send({ status: 'success', message: 'data created successfully' });
-  },
+fastify.post('/create/order', async (request, response) => {
+  try {
+    const result = await createOrder(request.body as IOrderInterface);
+    response.status(200).send(result);
+  } catch (error) {
+    response.status(500).send({ error: 'Failed to create an order' });
+  }
 });
-
-// create order
 async function createOrder(data: IOrderInterface) {
   const ps = prismaClientAssign();
   const oId = generateID('HEX', '01');
@@ -83,15 +69,7 @@ async function createOrder(data: IOrderInterface) {
   }
 }
 
-//  get order
-
-const route1 = {
-  getOrder: {
-    url: '/get/order',
-    callBack: getOrder,
-  },
-};
-
+// get order form db
 fastify.post('/get/order', async (request, response) => {
   try {
     const result = await getOrder(request.body as IOrderInterface);
@@ -127,7 +105,6 @@ async function getOrder(data: IOrderInterface) {
     );
     console.log(itemsWithTaxes);
     return {
-      ...orderDetails,
       items: itemsWithTaxes,
     };
   } catch (error) {
@@ -136,4 +113,86 @@ async function getOrder(data: IOrderInterface) {
   }
 }
 
+//cancel order
+const route2 = {};
+
+fastify.post('/cancel/order', async (request, response) => {
+  try {
+    const result = await cancelOrder(request.body as { orderId: string });
+    response
+      .status(200)
+      .send({ message: 'Order has been cancelled successfully' });
+  } catch (error) {
+    response
+      .status(500)
+      .send({ error: 'Error occured during cancellation of order' });
+  }
+});
+async function cancelOrder(data: { orderId: string }) {
+  console.log(data);
+  const ps = prismaClientAssign();
+  const findOrder = await ps.orderDetails.findFirst({
+    where: {
+      orderId: data.orderId,
+    },
+  });
+
+  if (!findOrder) {
+    console.log('Order id not exist');
+    throw new Error('order ID does not exist');
+  }
+  try {
+    const cancleOrder = await ps.$transaction([
+      ps.tax.deleteMany({
+        where: {
+          orderId: data.orderId,
+        },
+      }),
+      ps.item.deleteMany({
+        where: {
+          orderId: data.orderId,
+        },
+      }),
+      ps.orderDetails.delete({
+        where: {
+          orderId: data.orderId,
+        },
+      }),
+    ]);
+  } catch (error) {}
+}
 export const fastifyServer = fastify;
+
+// this is the code to write endpoints using routes
+// const route = {
+//   createOrder: {
+//     url: '/create/order',
+//     callBack: createOrder,
+//   },
+//   getOrder: {
+//     url: '/get/order',
+//     callBack: getOrder,
+//   },
+//   cancelOrder: {
+//     url: '/cancel/order',
+//     callBack: cancelOrder,
+//   },
+// };
+// fastify.p({
+//   method: 'POST',
+//   url: route.cancelOrder.url,
+//   handler: (request, response) => {
+//     try {
+//       console.log(request.body);
+//       response.send(
+//         route.cancelOrder.callBack(request.body as { orderId: string })
+//       ),
+//         response.status(200).send({ error: 'Order cancelled successfully' });
+//     } catch (error) {
+//       response
+//         .status(500)
+//         .send({ message: 'Error occured during the cancellation of order' });
+//     }
+//   },
+// });
+// create order
