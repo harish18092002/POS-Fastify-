@@ -16,7 +16,7 @@ export function itemValidator(data: IOrderInterface) {
 
 export function nameValidator(name: string) {
   const stringValidation = stringValidators(name);
-  if (!stringValidation)
+  if (!stringValidation && name !== null)
     throw new Error('The name of the item should be a string of length 50');
   return name;
 }
@@ -44,6 +44,12 @@ export function taxAmountValidator(taxAmount: string) {
   const stringValidation = stringValidators(taxAmount);
   if (!stringValidation)
     throw new Error('The amount should be a string of lenght 50 ');
+}
+export function orderIdValidators(orderId: string) {
+  const stringLength = orderId.length;
+  const lastchar =
+    orderId.charAt(stringLength - 2) + orderId.charAt(stringLength - 1);
+  console.log(lastchar);
 }
 
 export function stringValidators(data: string) {

@@ -4,7 +4,7 @@ import { generateID } from '@jetit/id';
 import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
 import { TResponse } from './routes/type';
 import { OrderDetails } from '@prisma/client';
-import { itemValidator } from './routes/validators';
+import { itemValidator, orderIdValidators } from './routes/validators';
 
 export const fastify = Fastify();
 fastify.register(prismaPlugin);
@@ -35,19 +35,19 @@ async function createOrder(
     });
     return parseInt(item.amount) * parseInt(item.quantity) + taxa[0];
   });
-  let sum = 0;
+  const sum = 0;
   console.log(total);
-  for (let i = 0; i < total.length; i++) {
-    sum += total[i];
-  }
-  console.log(sum);
+
+  const totalSum = total.reduce((start, end) => start + end, sum);
+
+  console.log(totalSum);
   try {
     itemValidator(data);
 
     arr.push(
       ps.orderDetails.create({
         data: {
-          totalAmount: JSON.stringify(sum),
+          totalAmount: JSON.stringify(totalSum),
           orderId: oId,
           status: 'ACCEPTED',
         },
@@ -145,6 +145,7 @@ async function getOrder(data: IOrderInterface) {
     );
     console.log(itemsWithTaxes);
     return {
+      ...orderDetails,
       items: itemsWithTaxes,
     };
   } catch (error) {
@@ -175,18 +176,20 @@ async function cancelOrder(data: {
   orderId: string;
 }): Promise<TResponse<OrderDetails>> {
   console.log(data);
-  const ps = prismaClientAssign();
-  const findOrder = await ps.orderDetails.findFirst({
-    where: {
-      orderId: data.orderId,
-    },
-  });
-
-  if (!findOrder) {
-    console.log('Order id not exist');
-    throw new Error('order ID does not exist');
-  }
   try {
+    orderIdValidators(data.orderId);
+    const ps = prismaClientAssign();
+    const findOrder = await ps.orderDetails.findFirst({
+      where: {
+        orderId: data.orderId,
+      },
+    });
+
+    if (!findOrder) {
+      console.log('Order id not exist');
+      throw new Error('order ID does not exist');
+    }
+
     const cancleOrder = await ps.$transaction([
       ps.tax.deleteMany({
         where: {
