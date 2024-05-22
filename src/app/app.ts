@@ -2,20 +2,28 @@ import Fastify from 'fastify';
 import { IOrderInterface } from './routes/interface';
 import { generateID } from '@jetit/id';
 import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
+import { TResponse } from './routes/type';
+import { OrderDetails } from '@prisma/client';
+import { error } from 'console';
 
 export const fastify = Fastify();
-
 fastify.register(prismaPlugin);
-
+// create order
 fastify.post('/create/order', async (request, response) => {
   try {
     const result = await createOrder(request.body as IOrderInterface);
     response.status(200).send(result);
   } catch (error) {
-    response.status(500).send({ error: 'Failed to create an order' });
+    response.status(500).send({
+      status: 'ERROR',
+      data: null,
+      error: 'Failed to create an order',
+    });
   }
 });
-async function createOrder(data: IOrderInterface) {
+async function createOrder(
+  data: IOrderInterface
+): Promise<TResponse<OrderDetails>> {
   const ps = prismaClientAssign();
   const oId = generateID('HEX', '01');
   const arr = [];
@@ -62,10 +70,17 @@ async function createOrder(data: IOrderInterface) {
     const transaction = await ps.$transaction(arr);
 
     console.log('Order created successfully');
-    return { success: true, data: transaction };
+    return {
+      status: 'SUCCESS',
+      data: null,
+      message: 'Order has been created successfully',
+    };
   } catch (error) {
-    console.error('Failed to create order:', error);
-    throw new Error('Failed to create order');
+    return {
+      status: 'ERROR',
+      data: error,
+      message: 'Error occured during creating the order',
+    };
   }
 }
 
@@ -75,7 +90,11 @@ fastify.post('/get/order', async (request, response) => {
     const result = await getOrder(request.body as IOrderInterface);
     response.status(200).send(result);
   } catch (error) {
-    response.status(500).send({ error: 'Failed to fetch order' });
+    response.status(500).send({
+      status: 'ERROR',
+      data: null,
+      message: 'Failed to fetch order from database',
+    });
   }
 });
 
@@ -108,8 +127,11 @@ async function getOrder(data: IOrderInterface) {
       items: itemsWithTaxes,
     };
   } catch (error) {
-    console.error(error);
-    throw new Error('Failed to fetch order');
+    return {
+      status: 'ERROR',
+      data: error,
+      message: 'Incorrect order Id ',
+    };
   }
 }
 
@@ -119,16 +141,18 @@ const route2 = {};
 fastify.post('/cancel/order', async (request, response) => {
   try {
     const result = await cancelOrder(request.body as { orderId: string });
-    response
-      .status(200)
-      .send({ message: 'Order has been cancelled successfully' });
+    response.status(200).send(result);
   } catch (error) {
-    response
-      .status(500)
-      .send({ error: 'Error occured during cancellation of order' });
+    response.status(500).send({
+      status: 'ERROR',
+      data: null,
+      message: 'Failed to cancel order',
+    });
   }
 });
-async function cancelOrder(data: { orderId: string }) {
+async function cancelOrder(data: {
+  orderId: string;
+}): Promise<TResponse<OrderDetails>> {
   console.log(data);
   const ps = prismaClientAssign();
   const findOrder = await ps.orderDetails.findFirst({
@@ -159,8 +183,65 @@ async function cancelOrder(data: { orderId: string }) {
         },
       }),
     ]);
-  } catch (error) {}
+    return {
+      status: 'SUCCESS',
+      message: ' Order has been cancelled successfully',
+      data: null,
+    };
+  } catch (error) {
+    return {
+      status: 'ERROR',
+      data: error,
+      message: 'Error occured during cancellation of order',
+    };
+  }
 }
+
+//Update order
+
+fastify.post('/update/order', async (request, response) => {
+  try {
+    console.log(request.body);
+    const result = await updateOrder(request.body as { orderId: string });
+    response.send(result);
+  } catch (error) {
+    response.status(500).send({
+      status: 'ERROR',
+      data: null,
+      message: 'Failed to update order',
+    });
+  }
+});
+
+async function updateOrder(data: {
+  orderId: string;
+}): Promise<TResponse<OrderDetails>> {
+  console.log(data);
+  try {
+    const ps = prismaClientAssign();
+    const orderData = await ps.orderDetails.findFirst({
+      where: {
+        orderId: data.orderId,
+      },
+    });
+    if (!orderData) {
+      return {
+        status: 'ERROR',
+        message: 'Order Id does not exists in the database',
+        data: null,
+      };
+    }
+
+    const updateTable = await ps.$transaction({});
+  } catch (error) {
+    return {
+      status: 'ERROR',
+      data: null,
+      message: 'Error occured during updating the order',
+    };
+  }
+}
+
 export const fastifyServer = fastify;
 
 // this is the code to write endpoints using routes
