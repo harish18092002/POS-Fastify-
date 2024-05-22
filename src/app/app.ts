@@ -27,15 +27,29 @@ async function createOrder(
   const ps = prismaClientAssign();
   const oId = generateID('HEX', '01');
   const arr = [];
-
+  const taxa = [];
+  const total = data.item.map((item) => {
+    item.tax.map((tax) => {
+      const taxamt = parseInt(tax.taxAmount);
+      taxa.push(taxamt);
+    });
+    return parseInt(item.amount) * parseInt(item.quantity) + taxa[0];
+  });
+  let sum = 0;
+  console.log(total);
+  for (let i = 0; i < total.length; i++) {
+    sum += total[i];
+  }
+  console.log(sum);
   try {
     itemValidator(data);
 
     arr.push(
       ps.orderDetails.create({
         data: {
+          totalAmount: JSON.stringify(sum),
           orderId: oId,
-          status: data.status,
+          status: 'ACCEPTED',
         },
       })
     );
