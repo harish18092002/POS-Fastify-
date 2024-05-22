@@ -1,4 +1,4 @@
-import { IItemInterface, IOrderInterface } from './interface';
+import { IItemInterface, IOrderInterface, ITaxInterface } from './interface';
 
 export function itemValidator(data: IOrderInterface) {
   data.item.forEach((items) => {
@@ -6,8 +6,14 @@ export function itemValidator(data: IOrderInterface) {
     descriptionValidator(items.description);
     quantityValidator(items.quantity);
     amountValidator(items.amount);
+
+    items.tax.forEach((tax) => {
+      taxTypeValidator(tax.taxType);
+      taxAmountValidator(tax.taxAmount);
+    });
   });
 }
+
 export function nameValidator(name: string) {
   const stringValidation = stringValidators(name);
   if (!stringValidation)
@@ -26,6 +32,16 @@ export function quantityValidator(quantity: string) {
 }
 export function amountValidator(amount: string) {
   const stringValidation = stringValidators(amount);
+  if (!stringValidation)
+    throw new Error('The amount should be a string of lenght 50 ');
+}
+export function taxTypeValidator(taxType: string) {
+  const stringValidation = stringValidators(taxType);
+  if (!stringValidation)
+    throw new Error('The amount should be a string of lenght 50 ');
+}
+export function taxAmountValidator(taxAmount: string) {
+  const stringValidation = stringValidators(taxAmount);
   if (!stringValidation)
     throw new Error('The amount should be a string of lenght 50 ');
 }
