@@ -1,6 +1,6 @@
 import { OrderDetails } from '@prisma/client';
-import { TResponse } from '../../utils/type';
-import { orderIdValidators } from '../../utils/validators';
+import { TResponse } from '../../utils/src/type';
+import { orderIdValidators } from 'src/app/utils';
 import { prismaClientAssign } from '../../prismaPlugin/prismaPlugin';
 
 export async function cancelOrder(data: {
