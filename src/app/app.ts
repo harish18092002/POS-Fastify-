@@ -1,16 +1,9 @@
 import Fastify from 'fastify';
-import { IOrderInterface } from './utils/interface';
-import { generateID } from '@jetit/id';
-import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
-import { TResponse } from './utils/type';
-import { OrderDetails } from '@prisma/client';
-import { itemValidator, orderIdValidators } from './utils/validators';
-import { createOrder } from './routes/createOrder';
-import { getOrder } from './routes/getOrder';
-import { cancelOrder } from './routes/cancelOrder';
+import { prismaPlugin } from './prismaPlugin/prismaPlugin';
+import { createOrder, getOrder, cancelOrder } from './routes';
+
 export const fastify = Fastify();
 fastify.register(prismaPlugin);
-
 const route: Record<string, Record<string, any>> = {
   createOrder: {
     url: '/create/order',
@@ -36,6 +29,49 @@ Object.values(route).forEach(function (values) {
     }
   });
 });
+
+// fastify.post('/update/order', async (request, response) => {
+//   try {
+//     console.log(request.body);
+//     const result = await updateOrder(request.body as { orderId: string });
+//     response.send(result);
+//   } catch (error) {
+//     response.status(500).send({
+//       status: 'ERROR',
+//       data: null,
+//       message: 'Failed to update order',
+//     });
+//   }
+// });
+
+// async function updateOrder(data: {
+//   orderId: string;
+// }): Promise<TResponse<OrderDetails>> {
+//   console.log(data);
+//   try {
+//     const ps = prismaClientAssign();
+//     const orderData = await ps.orderDetails.findFirst({
+//       where: {
+//         orderId: data.orderId,
+//       },
+//     });
+//     if (!orderData) {
+//       return {
+//         status: 'ERROR',
+//         message: 'Order Id does not exists in the database',
+//         data: null,
+//       };
+//     }
+
+//     const updateTable = await ps.$transaction({});
+//   } catch (error) {
+//     return {
+//       status: 'ERROR',
+//       data: null,
+//       message: 'Error occured during updating the order',
+//     };
+//   }
+// }
 
 export const fastifyServer = fastify;
 
