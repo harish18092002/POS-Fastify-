@@ -4,7 +4,6 @@ export interface IOrderInterface {
   item: Array<IItemInterface>;
   status: 'ACCEPTED' | 'CANCELLED';
 }
-
 export interface IItemInterface {
   itemId: string;
   name: string;

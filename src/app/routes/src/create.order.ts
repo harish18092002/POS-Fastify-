@@ -10,14 +10,13 @@ export async function createOrder(
   const ps = prismaClientAssign();
   const oId = generateID('HEX', '01');
   const arr = [];
-
   try {
     itemValidator(data);
     const itemId = generateID('HEX', '02');
     const totalSum = data.item.reduce((acc, item) => {
-      const itemTotal = parseInt(item.amount) * parseInt(item.quantity);
+      const itemTotal = parseFloat(item.amount) * parseFloat(item.quantity);
       const totalTax = item.tax.reduce(
-        (taxAcc, tax) => taxAcc + parseInt(tax.taxAmount),
+        (taxAcc, tax) => taxAcc + parseFloat(tax.taxAmount),
         0
       );
       return acc + itemTotal + totalTax;

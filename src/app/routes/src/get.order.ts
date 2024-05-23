@@ -1,7 +1,10 @@
+import { OrderDetails } from '@prisma/client';
 import { prismaClientAssign } from '../../prismaPlugin/prismaPlugin';
-import { IOrderInterface, orderIdValidators } from '../../utils';
+import { IOrderInterface, TResponse, orderIdValidators } from '../../utils';
 
-export async function getOrder(data: IOrderInterface) {
+export async function getOrder(
+  data: IOrderInterface
+): Promise<TResponse<OrderDetails>> {
   const ps = prismaClientAssign();
   try {
     orderIdValidators(data.orderId);
@@ -32,9 +35,10 @@ export async function getOrder(data: IOrderInterface) {
     if (!orderDetails) {
       throw new Error('Order not found');
     }
-
     return {
-      orderDetails,
+      status: 'SUCCESS',
+      data: orderDetails,
+      message: 'Order has been fetched successflly ',
     };
   } catch (error) {
     return {
