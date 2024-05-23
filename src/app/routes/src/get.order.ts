@@ -1,6 +1,5 @@
 import { prismaClientAssign } from '../../prismaPlugin/prismaPlugin';
-import { IOrderInterface } from '../../utils/src/interface';
-import { orderIdValidators } from '../../utils/src/validators';
+import { IOrderInterface, orderIdValidators } from '../../utils';
 
 export async function getOrder(data: IOrderInterface) {
   const ps = prismaClientAssign();

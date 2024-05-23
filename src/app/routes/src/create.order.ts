@@ -1,8 +1,7 @@
 import { generateID } from '@jetit/id';
 import { prismaClientAssign } from '../../prismaPlugin/prismaPlugin';
-import { IOrderInterface } from '../../utils/src/interface';
-import { itemValidator } from '../../utils/src/validators';
-import { TResponse } from '../../utils/src/type';
+import { IOrderInterface, TResponse, itemValidator } from '../../utils';
+
 import { OrderDetails } from '@prisma/client';
 
 export async function createOrder(

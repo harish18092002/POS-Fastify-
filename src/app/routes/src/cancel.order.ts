@@ -1,11 +1,10 @@
-import { OrderDetails } from '@prisma/client';
-import { TResponse } from '../../utils/src/type';
-import { orderIdValidators } from 'src/app/utils';
+import { OrderDetails, orderStatus } from '@prisma/client';
+import { IOrderInterface, orderIdValidators, TResponse } from '../../utils';
 import { prismaClientAssign } from '../../prismaPlugin/prismaPlugin';
 
-export async function cancelOrder(data: {
-  orderId: string;
-}): Promise<TResponse<OrderDetails>> {
+export async function cancelOrder(
+  data: IOrderInterface
+): Promise<TResponse<OrderDetails>> {
   console.log(data);
   try {
     orderIdValidators(data.orderId);
@@ -20,29 +19,18 @@ export async function cancelOrder(data: {
       console.log('Order id not exist');
       throw new Error('order ID does not exist');
     }
-
-    const cancleOrder = await ps.$transaction([
-      ps.tax.deleteMany({
-        where: {
-          orderId: data.orderId,
-        },
-      }),
-      ps.item.deleteMany({
-        where: {
-          orderId: data.orderId,
-        },
-      }),
-      ps.orderDetails.delete({
-        where: {
-          orderId: data.orderId,
-        },
-      }),
-    ]);
-
+    const updateOrder = await ps.orderDetails.update({
+      where: {
+        orderId: data.orderId,
+      },
+      data: {
+        status: 'CANCELLED',
+      },
+    });
     return {
       status: 'SUCCESS',
       message: ' Order has been cancelled successfully',
-      data: null,
+      data: data.orderId,
     };
   } catch (error) {
     return {
