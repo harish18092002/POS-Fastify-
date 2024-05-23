@@ -1,4 +1,5 @@
-import { IItemInterface, IOrderInterface, ITaxInterface } from './interface';
+import { validateId } from '@jetit/id';
+import { IOrderInterface } from './interface';
 
 export function itemValidator(data: IOrderInterface) {
   data.item.forEach((items) => {
@@ -46,10 +47,11 @@ export function taxAmountValidator(taxAmount: string) {
     throw new Error('The amount should be a string of lenght 50 ');
 }
 export function orderIdValidators(orderId: string) {
-  const stringLength = orderId.length;
-  const lastchar =
-    orderId.charAt(stringLength - 2) + orderId.charAt(stringLength - 1);
-  console.log(lastchar);
+  try {
+    const orderidvalidation = validateId(orderId, 'HEX', '01');
+  } catch (error) {
+    throw new Error('Enter a valid order ID');
+  }
 }
 
 export function stringValidators(data: string) {

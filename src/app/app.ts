@@ -1,6 +1,6 @@
 import Fastify from 'fastify';
-import { IOrderInterface } from './routes/interface';
-import { generateID } from '@jetit/id';
+import { IItemInterface, IOrderInterface } from './routes/interface';
+import { generateID, validateId } from '@jetit/id';
 import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
 import { TResponse } from './routes/type';
 import { OrderDetails } from '@prisma/client';
@@ -23,26 +23,22 @@ fastify.post('/create/order', async (request, response) => {
 });
 async function createOrder(
   data: IOrderInterface
-): Promise<TResponse<OrderDetails>> {
+): Promise<{ status: string; data: any; message: string }> {
   const ps = prismaClientAssign();
   const oId = generateID('HEX', '01');
   const arr = [];
-  const taxa = [];
-  const total = data.item.map((item) => {
-    item.tax.map((tax) => {
-      const taxamt = parseInt(tax.taxAmount);
-      taxa.push(taxamt);
-    });
-    return parseInt(item.amount) * parseInt(item.quantity) + taxa[0];
-  });
-  const sum = 0;
-  console.log(total);
 
-  const totalSum = total.reduce((start, end) => start + end, sum);
-
-  console.log(totalSum);
   try {
     itemValidator(data);
+    const itemId = generateID('HEX', '02');
+    const totalSum = data.item.reduce((acc, item) => {
+      const itemTotal = parseInt(item.amount) * parseInt(item.quantity);
+      const totalTax = item.tax.reduce(
+        (taxAcc, tax) => taxAcc + parseInt(tax.taxAmount),
+        0
+      );
+      return acc + itemTotal + totalTax;
+    }, 0);
 
     arr.push(
       ps.orderDetails.create({
@@ -88,7 +84,7 @@ async function createOrder(
     console.log('Order created successfully');
     return {
       status: 'SUCCESS',
-      data: null,
+      data: { orderId: oId },
       message: 'Order has been created successfully',
     };
   } catch (error) {
@@ -117,6 +113,7 @@ fastify.post('/get/order', async (request, response) => {
 async function getOrder(data: IOrderInterface) {
   const ps = prismaClientAssign();
   try {
+    orderIdValidators(data.orderId);
     const orderDetails = await ps.$transaction([
       ps.orderDetails.findFirst({
         where: { orderId: data.orderId },
@@ -216,7 +213,7 @@ async function cancelOrder(data: {
     return {
       status: 'ERROR',
       data: error,
-      message: 'Error occured during cancellation of order',
+      message: error.message,
     };
   }
 }
@@ -256,9 +253,7 @@ async function cancelOrder(data: {
 //       };
 //     }
 
-//     const updateTable = await ps.$transaction({
-
-//     });
+//     const updateTable = await ps.$transaction({});
 //   } catch (error) {
 //     return {
 //       status: 'ERROR',
