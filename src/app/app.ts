@@ -1,10 +1,10 @@
 import Fastify from 'fastify';
-import { IOrderInterface } from './routes/interface';
+import { IOrderInterface } from './utils/interface';
 import { generateID } from '@jetit/id';
 import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
-import { TResponse } from './routes/type';
+import { TResponse } from './utils/type';
 import { OrderDetails } from '@prisma/client';
-import { itemValidator, orderIdValidators } from './routes/validators';
+import { itemValidator, orderIdValidators } from './utils/validators';
 
 export const fastify = Fastify();
 fastify.register(prismaPlugin);
@@ -113,46 +113,34 @@ async function getOrder(data: IOrderInterface) {
   const ps = prismaClientAssign();
   try {
     orderIdValidators(data.orderId);
-    const orderDetails = await ps.$transaction([
-      ps.orderDetails.findFirst({
-        where: { orderId: data.orderId },
-      }),
-      ps.item.findMany({
-        where: { orderId: data.orderId },
-        select: {
-          itemId: true,
-          name: true,
-          description: true,
-          quantity: true,
-          amount: true,
-          tax: true,
+    const orderDetails = await ps.orderDetails.findFirst({
+      where: { orderId: data.orderId },
+      select: {
+        orderId: true,
+        status: true,
+        totalAmount: true,
+        item: {
+          select: {
+            itemId: true,
+            name: true,
+            description: true,
+            quantity: true,
+            amount: true,
+            tax: {
+              select: {
+                taxAmount: true,
+                taxId: true,
+                taxType: true,
+              },
+            },
+          },
         },
-      }),
-      // ps.tax.findMany({
-      //   where: {
-      //     orderId: data.orderId,
-      //   },
-      //   select: {
-      //     itemId: true,
-      //     taxId: true,
-      //     taxAmount: true,
-      //     taxType: true,
-      //   },
-      // }),
-    ]);
+      },
+    });
     if (!orderDetails) {
       throw new Error('Order not found');
     }
-    // const itemsWithTaxes = [];
-    // orderDetails[1].forEach((item) => {
-    //   orderDetails[2].find((tax) => {
-    //     if (item.itemId == tax.itemId) {
-    //       itemsWithTaxes.push(item, tax);
-    //     }
-    //   });
-    // });
 
-    // console.log(itemsWithTaxes);
     return {
       orderDetails,
     };
