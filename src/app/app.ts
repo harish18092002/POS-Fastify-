@@ -1,6 +1,6 @@
 import Fastify from 'fastify';
-import { IItemInterface, IOrderInterface } from './routes/interface';
-import { generateID, validateId } from '@jetit/id';
+import { IOrderInterface } from './routes/interface';
+import { generateID } from '@jetit/id';
 import { prismaClientAssign, prismaPlugin } from './prismaPlugin/prismaPlugin';
 import { TResponse } from './routes/type';
 import { OrderDetails } from '@prisma/client';
@@ -8,19 +8,33 @@ import { itemValidator, orderIdValidators } from './routes/validators';
 
 export const fastify = Fastify();
 fastify.register(prismaPlugin);
-// create order
-fastify.post('/create/order', async (request, response) => {
-  try {
-    const result = await createOrder(request.body as IOrderInterface);
-    response.status(200).send(result);
-  } catch (error) {
-    response.status(500).send({
-      status: 'ERROR',
-      data: null,
-      error: 'Failed to create an order',
-    });
-  }
+
+const route: Record<string, Record<string, any>> = {
+  createOrder: {
+    url: '/create/order',
+    callBack: createOrder,
+  },
+  getOrder: {
+    url: '/get/order',
+    callBack: getOrder,
+  },
+  cancelOrder: {
+    url: '/cancel/order',
+    callBack: cancelOrder,
+  },
+};
+
+Object.values(route).forEach(function (values) {
+  fastify.post(values.url, async (request, response) => {
+    try {
+      const res = await values.callBack(request.body);
+      response.status(200).send(res);
+    } catch (error) {
+      response.status(500).send(error.message);
+    }
+  });
 });
+
 async function createOrder(
   data: IOrderInterface
 ): Promise<{ status: string; data: any; message: string }> {
@@ -81,7 +95,6 @@ async function createOrder(
 
     const transaction = await ps.$transaction(arr);
 
-    console.log('Order created successfully');
     return {
       status: 'SUCCESS',
       data: { orderId: oId },
@@ -96,20 +109,6 @@ async function createOrder(
   }
 }
 
-// get order form db
-fastify.post('/get/order', async (request, response) => {
-  try {
-    const result = await getOrder(request.body as IOrderInterface);
-    response.status(200).send(result);
-  } catch (error) {
-    response.status(500).send({
-      status: 'ERROR',
-      data: null,
-      message: 'Failed to fetch order from database',
-    });
-  }
-});
-
 async function getOrder(data: IOrderInterface) {
   const ps = prismaClientAssign();
   try {
@@ -120,30 +119,42 @@ async function getOrder(data: IOrderInterface) {
       }),
       ps.item.findMany({
         where: { orderId: data.orderId },
+        select: {
+          itemId: true,
+          name: true,
+          description: true,
+          quantity: true,
+          amount: true,
+          tax: true,
+        },
       }),
+      // ps.tax.findMany({
+      //   where: {
+      //     orderId: data.orderId,
+      //   },
+      //   select: {
+      //     itemId: true,
+      //     taxId: true,
+      //     taxAmount: true,
+      //     taxType: true,
+      //   },
+      // }),
     ]);
-
     if (!orderDetails) {
       throw new Error('Order not found');
     }
+    // const itemsWithTaxes = [];
+    // orderDetails[1].forEach((item) => {
+    //   orderDetails[2].find((tax) => {
+    //     if (item.itemId == tax.itemId) {
+    //       itemsWithTaxes.push(item, tax);
+    //     }
+    //   });
+    // });
 
-    const itemsWithTaxes = await Promise.all(
-      orderDetails[1].map(async (item) => {
-        const taxes = await ps.tax.findMany({
-          where: { itemId: item.itemId },
-          select: {
-            taxId: true,
-            taxAmount: true,
-            taxType: true,
-          },
-        });
-        return { ...item, taxes };
-      })
-    );
-    console.log(itemsWithTaxes);
+    // console.log(itemsWithTaxes);
     return {
-      ...orderDetails,
-      items: itemsWithTaxes,
+      orderDetails,
     };
   } catch (error) {
     return {
@@ -155,20 +166,6 @@ async function getOrder(data: IOrderInterface) {
 }
 
 //cancel order
-const route2 = {};
-
-fastify.post('/cancel/order', async (request, response) => {
-  try {
-    const result = await cancelOrder(request.body as { orderId: string });
-    response.status(200).send(result);
-  } catch (error) {
-    response.status(500).send({
-      status: 'ERROR',
-      data: null,
-      message: 'Failed to cancel order',
-    });
-  }
-});
 async function cancelOrder(data: {
   orderId: string;
 }): Promise<TResponse<OrderDetails>> {
@@ -204,6 +201,7 @@ async function cancelOrder(data: {
         },
       }),
     ]);
+
     return {
       status: 'SUCCESS',
       message: ' Order has been cancelled successfully',

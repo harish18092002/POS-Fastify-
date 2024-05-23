@@ -13,7 +13,6 @@ model OrderDetails {
   orderId     String      @id @map("order_id")
   status      orderStatus
   item        Item[]
-  Tax         Tax[]
 }
 
 enum orderStatus {
@@ -33,13 +32,12 @@ model Item {
 }
 
 model Tax {
-  orderDetails OrderDetails @relation(fields: [orderId], references: [orderId])
-  orderId      String
-  taxId        String       @id @map("tax_id")
-  taxType      taxType      @map("tax_type")
-  itemId       String       @map("item_id")
-  taxAmount    String       @map("tax_amount")
-  item         Item         @relation(fields: [itemId], references: [itemId])
+  orderId   String
+  taxId     String  @id @map("tax_id")
+  taxType   taxType @map("tax_type")
+  itemId    String  @map("item_id")
+  taxAmount String  @map("tax_amount")
+  item      Item    @relation(fields: [itemId], references: [itemId])
 }
 
 enum taxType {
