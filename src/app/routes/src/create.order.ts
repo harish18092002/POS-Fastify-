@@ -1,5 +1,5 @@
 import { generateID } from '@jetit/id';
-import { prismaClientAssign } from '../../prismaPlugin/prismaPlugin';
+import { prismaClientAssign } from '../../prismaPlugin/plugins/prismaPlugin';
 import { IOrderInterface, TResponse, itemValidator } from '../../utils';
 
 import { OrderDetails } from '@prisma/client';

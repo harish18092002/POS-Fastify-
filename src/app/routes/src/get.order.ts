@@ -1,5 +1,5 @@
 import { OrderDetails } from '@prisma/client';
-import { prismaClientAssign } from '../../prismaPlugin/prismaPlugin';
+import { prismaClientAssign } from '../../prismaPlugin/plugins/prismaPlugin';
 import { IOrderInterface, TResponse, orderIdValidators } from '../../utils';
 
 export async function getOrder(
