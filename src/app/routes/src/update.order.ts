@@ -23,20 +23,36 @@ export async function updateOrder(
         message: 'Order does not exist. Please create a new order.',
       };
     }
+    const itemId = data.item.map((item) => {
+      return item.itemId;
+    });
+    const filteredId = itemId.filter((x) => x !== undefined);
+
+    const existingItem = await ps.item.findMany({
+      where: {
+        itemId: { in: filteredId },
+      },
+    });
+
     const itemData = data.item.forEach(async (item) => {
+      console.log('this is mapped item', item);
       const itemId = item.itemId || generateID('HEX', '02');
+      console.log('This is user data', data);
 
-      const existingItem = await ps.item.findFirst({
-        where: { itemId: itemId },
-      });
-
-      if (existingItem) {
+      if (data.hasOwnProperty('name')) {
+        console.log('The item has name');
+      } else {
+        console.log('The item dont have name');
+      }
+      if (existingItem[0].itemId === item.itemId) {
         arr.push(
           ps.item.update({
             where: { itemId: itemId },
             data: {
               quantity: item.quantity,
               amount: item.amount,
+              name: item.name,
+              description: item.description,
             },
           })
         );
@@ -54,7 +70,7 @@ export async function updateOrder(
           })
         );
 
-        for (const tax of item.tax) {
+        const taxes = item.tax.map((tax) => {
           arr.push(
             ps.tax.create({
               data: {
@@ -66,7 +82,7 @@ export async function updateOrder(
               },
             })
           );
-        }
+        });
       }
     });
 
@@ -85,4 +101,8 @@ export async function updateOrder(
       message: 'Error occurred during updating the order',
     };
   }
+}
+
+function add(a, b) {
+  return a + b;
 }
