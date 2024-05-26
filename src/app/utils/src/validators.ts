@@ -3,73 +3,108 @@ import { IOrderInterface } from './interface';
 
 export function itemValidator(data: IOrderInterface) {
   data.item.forEach((items) => {
-    if (items.hasOwnProperty('name') && items.name !== '') {
+    if (items.hasOwnProperty('name') && items.name.trim() !== '') {
       nameValidator(items.name);
     } else {
-      throw new Error('Name is missing');
+      throw new Error('Name is missing or empty');
     }
 
-    if (items.hasOwnProperty('description') && items.description !== '') {
+    if (
+      items.hasOwnProperty('description') &&
+      items.description.trim() !== ''
+    ) {
       descriptionValidator(items.description);
     } else {
-      throw new Error('Description is missing');
+      throw new Error('Description is missing or empty');
     }
 
-    if (items.hasOwnProperty('quantity') && items.quantity !== '') {
+    if (items.hasOwnProperty('quantity') && items.quantity.trim() !== '') {
       quantityValidator(items.quantity);
     } else {
-      throw new Error('Quantity is missing');
+      throw new Error('Quantity is missing or empty');
     }
-    if (items.hasOwnProperty('amount') && items.amount !== '') {
+    if (items.hasOwnProperty('amount') && items.amount.trim() !== '') {
       amountValidator(items.amount);
     } else {
-      throw new Error('Amount is missing');
+      throw new Error('Amount is missing or empty');
     }
 
-    items.tax.map((tax) => {
-      taxTypeValidator(tax.taxType);
-      taxAmountValidator(tax.taxAmount);
-    });
+    if (
+      items.hasOwnProperty('tax') &&
+      Array.isArray(items.tax) &&
+      items.tax.length > 0
+    ) {
+      items.tax.forEach((tax) => {
+        if (tax.taxType.trim() !== '') {
+          taxTypeValidator(tax.taxType);
+        } else {
+          throw new Error('Tax type is missing or empty');
+        }
+
+        if (tax.taxAmount.trim() !== '') {
+          taxAmountValidator(tax.taxAmount);
+        } else {
+          throw new Error('Tax amount is missing or empty');
+        }
+      });
+    } else {
+      throw new Error('Tax information is missing or empty');
+    }
   });
 }
 
 export function nameValidator(name: string) {
-  const stringValidation = stringValidators(name);
-  if (!stringValidation && name !== null) {
+  if (!stringValidators(name)) {
     throw new Error(
-      'The name of the item should be a string of length 50 and it should not to be a empty value'
+      'The name of the item should be a string of length 50 and it should not be an empty value'
     );
   }
   return name;
 }
+
 export function descriptionValidator(description: string) {
-  const stringValidation = stringValidators(description);
-  if (!stringValidation)
-    throw new Error('The description should be a string of lenght 50 ');
+  if (!stringValidators(description)) {
+    throw new Error(
+      'The description should be a string of length 50 and it should not be empty'
+    );
+  }
 }
+
 export function quantityValidator(quantity: string) {
-  const stringValidation = stringValidators(quantity);
-  if (!stringValidation)
-    throw new Error('The quantity should be a string of lenght 50 ');
+  if (!stringValidators(quantity)) {
+    throw new Error(
+      'The quantity should be a string of length 50 and it should not be empty'
+    );
+  }
 }
+
 export function amountValidator(amount: string) {
-  const stringValidation = stringValidators(amount);
-  if (!stringValidation)
-    throw new Error('The amount should be a string of lenght 50 ');
+  if (!stringValidators(amount)) {
+    throw new Error(
+      'The amount should be a string of length 50 and it should not be empty'
+    );
+  }
 }
+
 export function taxTypeValidator(taxType: string) {
-  const stringValidation = stringValidators(taxType);
-  if (!stringValidation)
-    throw new Error('The amount should be a string of lenght 50 ');
+  if (!stringValidators(taxType)) {
+    throw new Error(
+      'The tax type should be a string of length 50 and it should not be empty'
+    );
+  }
 }
+
 export function taxAmountValidator(taxAmount: string) {
-  const stringValidation = stringValidators(taxAmount);
-  if (!stringValidation)
-    throw new Error('The amount should be a string of lenght 50 ');
+  if (!stringValidators(taxAmount)) {
+    throw new Error(
+      'The tax amount should be a string of length 50 and it should not be empty'
+    );
+  }
 }
+
 export function orderIdValidators(orderId: string) {
   try {
-    const orderIdvalidation = validateId(orderId, 'HEX', '01');
+    validateId(orderId, 'HEX', '01');
   } catch (error) {
     throw new Error('Enter a valid order ID');
   }
@@ -77,12 +112,16 @@ export function orderIdValidators(orderId: string) {
 
 export function itemIdValidators(itemId: string) {
   try {
-    const itemIdvalidation = validateId(itemId, 'HEX', '02');
+    validateId(itemId, 'HEX', '02');
   } catch (error) {
     throw new Error('Enter a valid Item ID');
   }
 }
+
 export function stringValidators(data: string) {
-  if (data.length <= 50 && typeof data == 'string') return true;
-  else return false;
+  return (
+    data.trim().length <= 50 &&
+    typeof data === 'string' &&
+    data.trim().length > 0
+  );
 }
