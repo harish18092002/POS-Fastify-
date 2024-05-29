@@ -1,7 +1,6 @@
 import { OrderDetails } from '@prisma/client';
-
 import { prismaClientAssign } from '../../prismaPlugin';
-import { IOrderInterface, TResponse, orderIdValidators } from '../../utils';
+import { IOrderInterface, TResponse } from '../../utils';
 import { generateID } from '@jetit/id';
 
 export async function updateOrder(
@@ -16,6 +15,7 @@ export async function updateOrder(
       where: { orderId: oId },
     });
 
+    console.log(existingOrder);
     if (!existingOrder) {
       return {
         status: 'ERROR',
@@ -23,6 +23,41 @@ export async function updateOrder(
         message: 'Order does not exist. Please create a new order.',
       };
     }
+    const amountAndTax = [];
+    // updating the total amount occurs here
+    data.item.map((datas) => {
+      if (!datas.hasOwnProperty('itemId')) {
+        if (datas.hasOwnProperty('amount') && datas.hasOwnProperty('tax')) {
+          amountAndTax.push(datas);
+        } else {
+          console.log('amount and tax does not present');
+        }
+      }
+    });
+
+    const totalSum = amountAndTax.reduce((acc, item) => {
+      const itemTotal = parseFloat(item.amount) * parseFloat(item.quantity);
+      const totalTax = item.tax.reduce(
+        (taxAcc, tax) => taxAcc + parseFloat(tax.taxAmount),
+        0
+      );
+      return acc + itemTotal + totalTax;
+    }, 0);
+
+    const existingOrderAmountUpdate =
+      parseFloat(existingOrder.totalAmount) + totalSum;
+
+    // updating total amount in db
+
+    await ps.orderDetails.update({
+      where: {
+        orderId: data.orderId,
+      },
+      data: {
+        totalAmount: JSON.stringify(existingOrderAmountUpdate),
+      },
+    });
+
     const itemId = data.item.map((item) => {
       return item.itemId;
     });
@@ -34,17 +69,13 @@ export async function updateOrder(
       },
     });
 
-    const itemData = data.item.forEach(async (item) => {
-      console.log('this is mapped item', item);
+    data.item.forEach(async (item) => {
       const itemId = item.itemId || generateID('HEX', '02');
-      console.log('This is user data', data);
 
-      if (data.hasOwnProperty('name')) {
-        console.log('The item has name');
-      } else {
-        console.log('The item dont have name');
-      }
-      if (existingItem[0].itemId === item.itemId) {
+      if (
+        item.hasOwnProperty('itemId') &&
+        existingItem[0].itemId === item.itemId
+      ) {
         arr.push(
           ps.item.update({
             where: { itemId: itemId },
@@ -70,7 +101,7 @@ export async function updateOrder(
           })
         );
 
-        const taxes = item.tax.map((tax) => {
+        item.tax.forEach((tax) => {
           arr.push(
             ps.tax.create({
               data: {
@@ -87,11 +118,36 @@ export async function updateOrder(
     });
 
     await ps.$transaction(arr);
+    //  for getting all the details from db after updating
+    const orderDetails = await ps.orderDetails.findFirst({
+      where: { orderId: data.orderId },
+      select: {
+        orderId: true,
+        status: true,
+        totalAmount: true,
+        item: {
+          select: {
+            itemId: true,
+            name: true,
+            description: true,
+            quantity: true,
+            amount: true,
+            tax: {
+              select: {
+                taxAmount: true,
+                taxId: true,
+                taxType: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     console.log('Order updated successfully');
     return {
       status: 'SUCCESS',
-      data: null,
+      data: orderDetails,
       message: 'Order has been updated successfully',
     };
   } catch (error) {
@@ -101,8 +157,4 @@ export async function updateOrder(
       message: 'Error occurred during updating the order',
     };
   }
-}
-
-function add(a, b) {
-  return a + b;
 }

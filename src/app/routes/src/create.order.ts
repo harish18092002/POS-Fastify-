@@ -64,7 +64,7 @@ export async function createOrder(
 
     return {
       status: 'SUCCESS',
-      data: { orderId: oId },
+      data: { orderId: oId, totalAmount: JSON.stringify(totalSum) },
       message: 'Order has been created successfully',
     };
   } catch (error) {

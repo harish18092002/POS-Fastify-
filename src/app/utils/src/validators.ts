@@ -1,104 +1,57 @@
 import { validateId } from '@jetit/id';
-import { IOrderInterface } from './interface';
+import { IItemInterface, IOrderInterface } from './interface';
+import { ascending } from '../../../app/test';
 
 export function itemValidator(data: IOrderInterface) {
+  ascending();
   data.item.forEach((items) => {
-    if (items.hasOwnProperty('name') && items.name.trim() !== '') {
-      nameValidator(items.name);
-    } else {
-      throw new Error('Name is missing or empty');
-    }
-
+    validators(items);
     if (
-      items.hasOwnProperty('description') &&
-      items.description.trim() !== ''
-    ) {
-      descriptionValidator(items.description);
-    } else {
-      throw new Error('Description is missing or empty');
-    }
-
-    if (items.hasOwnProperty('quantity') && items.quantity.trim() !== '') {
-      quantityValidator(items.quantity);
-    } else {
-      throw new Error('Quantity is missing or empty');
-    }
-    if (items.hasOwnProperty('amount') && items.amount.trim() !== '') {
-      amountValidator(items.amount);
-    } else {
-      throw new Error('Amount is missing or empty');
-    }
-
-    if (
-      items.hasOwnProperty('tax') &&
-      Array.isArray(items.tax) &&
-      items.tax.length > 0
-    ) {
-      items.tax.forEach((tax) => {
-        if (tax.taxType.trim() !== '') {
-          taxTypeValidator(tax.taxType);
-        } else {
-          throw new Error('Tax type is missing or empty');
-        }
-
-        if (tax.taxAmount.trim() !== '') {
-          taxAmountValidator(tax.taxAmount);
-        } else {
-          throw new Error('Tax amount is missing or empty');
-        }
-      });
-    } else {
+      !(
+        items.hasOwnProperty('tax') &&
+        Array.isArray(items.tax) &&
+        items.tax.length > 0
+      )
+    )
       throw new Error('Tax information is missing or empty');
-    }
   });
 }
 
-export function nameValidator(name: string) {
-  if (!stringValidators(name)) {
-    throw new Error(
-      'The name of the item should be a string of length 50 and it should not be an empty value'
-    );
-  }
-  return name;
+function vdata(data) {
+  if (typeof data === 'string' && stringValidators(data) && data.trim() !== '')
+    return true;
+  return false;
 }
 
-export function descriptionValidator(description: string) {
-  if (!stringValidators(description)) {
-    throw new Error(
-      'The description should be a string of length 50 and it should not be empty'
-    );
-  }
-}
+function validators(items: IItemInterface) {
+  try {
+    const userkeys = Object.keys(items);
 
-export function quantityValidator(quantity: string) {
-  if (!stringValidators(quantity)) {
-    throw new Error(
-      'The quantity should be a string of length 50 and it should not be empty'
-    );
-  }
-}
+    const missingKeys = [];
+    const interfaceKeys = ['name', 'description', 'quantity', 'amount', 'tax'];
 
-export function amountValidator(amount: string) {
-  if (!stringValidators(amount)) {
-    throw new Error(
-      'The amount should be a string of length 50 and it should not be empty'
-    );
-  }
-}
+    for (let i = 0; i < interfaceKeys.length; i++) {
+      for (let j = 0; j <= userkeys.length; j++) {
+        if (interfaceKeys[i] === userkeys[j]) break;
+        if (j === userkeys.length) {
+          missingKeys.push(interfaceKeys[i]);
+        }
+      }
+    }
+    if (missingKeys.length > 0)
+      throw new Error(missingKeys.join(', ') + ' is mandatory');
 
-export function taxTypeValidator(taxType: string) {
-  if (!stringValidators(taxType)) {
-    throw new Error(
-      'The tax type should be a string of length 50 and it should not be empty'
-    );
-  }
-}
-
-export function taxAmountValidator(taxAmount: string) {
-  if (!stringValidators(taxAmount)) {
-    throw new Error(
-      'The tax amount should be a string of length 50 and it should not be empty'
-    );
+    console.log(missingKeys);
+    userkeys.forEach((v) => {
+      if (Array.isArray(items[v]) && items[v].length > 0) {
+        items[v].forEach((tax) => {
+          if (!vdata(tax['taxType'])) throw 'taxType is mandatory';
+          if (!vdata(tax['taxAmount'])) throw 'taxAmount is mandatory';
+        });
+      } else if (!vdata(items[v])) throw v + ' should not be empty';
+    });
+  } catch (e) {
+    throw new Error(e);
   }
 }
 
@@ -125,3 +78,78 @@ export function stringValidators(data: string) {
     data.trim().length > 0
   );
 }
+
+// // if (items.hasOwnProperty('name') && items.name.trim() !== '') {
+// //   nameValidator(items.name);
+// // } else {
+// //   throw new Error('Name is missing or empty');
+// // }
+
+// if (items.hasOwnProperty('quantity') && items.quantity.trim() !== '') {
+//   quantityValidator(items.quantity);
+// } else {
+//   throw new Error('Quantity is missing or empty');
+// }
+// if (items.hasOwnProperty('amount') && items.amount.trim() !== '') {
+//   amountValidator(items.amount);
+// } else {
+//   throw new Error('Amount is missing or empty');
+// }
+
+// export function taxTypeValidator(taxType: string) {
+//   if (
+//     (stringValidators(taxType) && taxType.trim() !== '' && taxType === 'GST') ||
+//     taxType === 'VAT'
+//   ) {
+//     return taxType;
+//   } else {
+//     throw new Error(
+//       'The tax type should be a string of either GST or VAT and it should not be empty'
+//     );
+//   }
+// }
+
+// export function taxAmountValidator(taxAmount: string) {
+//   if (stringValidators(taxAmount) && taxAmount.trim() !== '') {
+//     return taxAmount;
+//   } else {
+//     throw new Error(
+//       'The tax amount should be a string of length 50 and it should not be empty'
+//     );
+//   }
+// }
+
+// comparing 2 arrays
+// const mandatoryArray = [1, 2, 6, 8, 10, 0];
+// const arr2 = [1, 9, 2, 9, 7, 8];
+// const missingarray = [];
+// console.log(missingarray);
+// if (mandatoryArray.length !== arr2.length)
+//   throw new Error('Array mismatched with mandatory array');
+
+// for (let i = 0; i < mandatoryArray.length; i++) {
+//   for (let j = 0; j <= arr2.length; j++) {
+//     if (mandatoryArray[i] === arr2[j]) break;
+//     if (j === arr2.length) missingarray.push(mandatoryArray[i]);
+//     throw new Error('Mandatory array element not is secondary array');
+//   }
+// }
+
+// mandatoryArray.every((v) => arr2.includes(v));
+
+// function bubbleSort(array) {
+//   var done = false;
+//   while (!done) {
+//     done = true;
+//     for (var i = 1; i < array.length; i += 1) {
+//       if (array[i - 1] > array[i]) {
+//         done = false;
+//         var tmp = array[i - 1];
+//         array[i - 1] = array[i];
+//         array[i] = tmp;
+//       }
+//     }
+//   }
+
+//   return array;
+// }
