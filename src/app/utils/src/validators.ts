@@ -1,10 +1,11 @@
 import { validateId } from '@jetit/id';
 import { IItemInterface, IOrderInterface } from './interface';
-import { ascending, wordsCheck } from '../../../app/test';
+import { ascending, reverseNumber, wordsCheck } from '../../../app/test';
 
 export function itemValidator(data: IOrderInterface) {
   ascending();
   wordsCheck();
+  reverseNumber();
   data.item.forEach((items) => {
     validators(items);
     if (
@@ -137,42 +138,3 @@ export function stringValidators(data: string) {
 // }
 
 // mandatoryArray.every((v) => arr2.includes(v));
-
-// function bubbleSort(array) {
-//   var done = false;
-//   while (!done) {
-//     done = true;
-//     for (var i = 1; i < array.length; i += 1) {
-//       if (array[i - 1] > array[i]) {
-//         done = false;
-//         var tmp = array[i - 1];
-//         array[i - 1] = array[i];
-//         array[i] = tmp;
-//       }
-//     }
-//   }
-
-//   return array;
-// }
-
-// export function wordsCheck() {
-//   const mainStr = 'lstarmstar';
-//   const subStr = 'star';
-//   let count = 0;
-//   if (subStr.length > mainStr.length) {
-//     throw new Error('Substring is not present in main string');
-//   }
-//   for (let i = 0; i <= mainStr.length - subStr.length; i++) {
-//     let match = true;
-//     for (let j = 0; j < subStr.length; j++) {
-//       if (mainStr[i + j] !== subStr[j]) {
-//         match = false;
-//         break;
-//       }
-//     }
-//     if (match) {
-//       count++;
-//     }
-//   }
-//   console.log(count);
-// }

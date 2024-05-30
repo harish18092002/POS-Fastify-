@@ -53,3 +53,8 @@ export function wordsCheck() {
   }
   console.log(constants.count);
 }
+
+export function reverse() {
+  const input = 121;
+  console.log(input[0]);
+}
