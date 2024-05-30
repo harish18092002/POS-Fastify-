@@ -1,9 +1,10 @@
 import { validateId } from '@jetit/id';
 import { IItemInterface, IOrderInterface } from './interface';
-import { ascending } from '../../../app/test';
+import { ascending, wordsCheck } from '../../../app/test';
 
 export function itemValidator(data: IOrderInterface) {
   ascending();
+  wordsCheck();
   data.item.forEach((items) => {
     validators(items);
     if (
@@ -152,4 +153,26 @@ export function stringValidators(data: string) {
 //   }
 
 //   return array;
+// }
+
+// export function wordsCheck() {
+//   const mainStr = 'lstarmstar';
+//   const subStr = 'star';
+//   let count = 0;
+//   if (subStr.length > mainStr.length) {
+//     throw new Error('Substring is not present in main string');
+//   }
+//   for (let i = 0; i <= mainStr.length - subStr.length; i++) {
+//     let match = true;
+//     for (let j = 0; j < subStr.length; j++) {
+//       if (mainStr[i + j] !== subStr[j]) {
+//         match = false;
+//         break;
+//       }
+//     }
+//     if (match) {
+//       count++;
+//     }
+//   }
+//   console.log(count);
 // }
