@@ -144,4 +144,9 @@ export function problems() {
   }
   const total = arr2.reduce((prev, cur) => prev + cur, 0);
   console.log(total);
+
+  // Problem 16
+
+  const char = 'A';
+  console.log('This is the character code ', char.charCodeAt(0));
 }
