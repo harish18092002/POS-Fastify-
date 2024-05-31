@@ -51,10 +51,38 @@ export function wordsCheck() {
       constants.count += 1;
     }
   }
-  console.log(constants.count);
+  // console.log(constants.count);
 }
 
-export function reverse() {
-  const input = 121;
-  console.log(input[0]);
+export function reverseNumber() {
+  const input = 128;
+  let count = 1;
+
+  // for (let i = 10; i <= input; i = i * 10) {
+  //   count++;
+  // }
+  // let j = count;
+  // while (j >= 0) {
+  //   let num = Math.floor(input / Math.pow(10, j)) % 10;
+  //   console.log(num);
+  //   j--;
+  // }
+
+  // for (let j = count; j >= 0; j--) {}
+
+  // const first = Math.floor(input / 100) % 10;
+
+  // const second = Math.floor(input / 10) % 10;
+  // const third = Math.floor(input % 10);
+
+  let n = input;
+  let sum = 0;
+  while (n > 0) {
+    const digit = n % 10;
+    sum = sum * 10 + digit;
+    n = Math.floor(n / 10);
+  }
+  // console.log(sum);
+
+  // console.log(first);
 }
