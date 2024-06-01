@@ -135,18 +135,32 @@ export function problems() {
   console.log();
 
   // Problem 15
+
   const arr2 = [9];
-  const input = 15;
+  const input = 5;
   let i = 0;
   while (i < input - 1) {
+    console.log(i);
     arr2.push(arr2[i] * 10 + 9);
     i++;
   }
   const total = arr2.reduce((prev, cur) => prev + cur, 0);
-  console.log(total);
+  console.log('This is the total of the problem 15', total);
 
   // Problem 16
 
-  const char = 'A';
-  console.log('This is the character code ', char.charCodeAt(0));
+  // Problem 17
+  const userInput = 'sam';
+  const alphabets = 'abcdefghijklmnopqrstuvwxyz';
+  const arr5 = [];
+  for (let i = 0; i < userInput.length; i++) {
+    console.log(userInput[i]);
+    for (let j = 0; j < alphabets.length; j++) {
+      if (userInput[i] === alphabets[j]) {
+        arr5.push(j + 1);
+      }
+    }
+  }
+  const total16 = arr5.reduce((prev, cur) => prev + cur, 0);
+  console.log(total16);
 }
