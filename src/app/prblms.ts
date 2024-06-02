@@ -148,6 +148,23 @@ export function problems() {
   console.log('This is the total of the problem 15', total);
 
   // Problem 16
+  const primes = [];
+
+  for (let i = 2; i < 100; i++) {
+    let isPrime = true;
+    for (let j = 2; j * j <= i; j++) {
+      if (i % j === 0) {
+        isPrime = false;
+        break;
+      }
+    }
+    if (isPrime) {
+      primes.push(i);
+      console.log(i);
+    }
+  }
+
+  console.log(primes);
 
   // Problem 17
   const userInput = 'sam';
@@ -163,4 +180,77 @@ export function problems() {
   }
   const total16 = arr5.reduce((prev, cur) => prev + cur, 0);
   console.log(total16);
+
+  // Problem 18
+
+  const passPhrase = 'aa aa bb cc dd ee';
+  const words = passPhrase.split(' ');
+  console.log('This is split', words);
+
+  let wordCount = {};
+  let isValid = true;
+
+  for (let i = 0; i < words.length; i++) {
+    console.log(words[i]);
+    if (wordCount[words[i]]) {
+      isValid = false;
+      console.log('The pass phrase is not valid');
+      break;
+    } else {
+      wordCount[words[i]] = 1;
+    }
+  }
+
+  if (isValid) {
+    console.log(wordCount, ' This is words count');
+    console.log('The pass phrase is valid');
+  } else {
+    console.log('The pass phrase is not valid');
+  }
+
+  // Problem 19
+
+  const captcha = '91212129';
+
+  let sum2 = 0;
+  const lengt = captcha.length;
+
+  for (let i = 0; i < lengt; i++) {
+    const currentDigit = captcha[i];
+    const nextDigit = captcha[(i + 1) % lengt];
+    console.log(nextDigit);
+
+    if (currentDigit === nextDigit) {
+      sum2 += parseInt(currentDigit);
+    }
+  }
+  console.log(sum2);
+
+  // Problem 20
+
+  const inpu = `5\t1\t9\t5\n7\t5\t3\n2\t4\t6\t8`;
+
+  let checksum = 0;
+
+  const rows = inpu.split('\n');
+  console.log(rows);
+  for (let i = 0; i < rows.length; i++) {
+    const values = rows[i].split('\t').map(Number);
+    console.log(values);
+    let min = values[0];
+    let max = values[0];
+
+    for (let j = 1; j < values.length; j++) {
+      if (values[j] < min) {
+        min = values[j];
+      }
+      if (values[j] > max) {
+        max = values[j];
+      }
+    }
+
+    checksum += max - min;
+  }
+
+  console.log('Checksum:', checksum);
 }
