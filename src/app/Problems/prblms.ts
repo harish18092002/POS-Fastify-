@@ -1,14 +1,16 @@
+import { sep } from 'path';
+
 // Problems
 export function problems() {
   // Problem 1
   const str = 'I am a intern in Surfboard payments';
   for (let i = 1; i <= 7; i++) {
-    console.log(str);
+    console.log('Problem1 ', str);
   }
 
   // Problem 2
   for (let i = 1; i <= 100; i++) {
-    console.log(i);
+    console.log('Problem2 ', i);
   }
 
   // Problem 3
@@ -28,7 +30,7 @@ export function problems() {
   for (let i = 1; i <= 100; i++) {
     sum4 = i + sum4;
   }
-  console.log(sum4);
+  console.log('Problem5 ', sum4);
 
   // Problem 6
   const words1 = 'abcdefghijklmnopqrstuvwxyz';
@@ -46,7 +48,7 @@ export function problems() {
   // Problem 8
   const arr1 = [1, 2, 3, 4, 5];
   let add = arr1.reduce((acc, red) => acc + red, 0);
-  console.log(add);
+  console.log('Problem8 ', add);
 
   // Problem 9
   const userValue = 45;
@@ -54,7 +56,7 @@ export function problems() {
   for (let i = userValue + 1; i <= 50 + userValue; i++) {
     sum1 = sum1 + i;
   }
-  console.log(sum1);
+  console.log('Problem9 ', sum1);
 
   // Problem 10
   const pattern = 8;
@@ -106,28 +108,29 @@ export function problems() {
     const sum3 = [];
     while (l < str.length) {
       sum3.push(Math.pow(parseInt(str[l]), 3));
+      if (sum3.reduce((acc, red) => acc + red, 0) === i) {
+        console.log('These are the amstrong numbers:- ', i);
+      }
       l++;
-    }
-    if (sum3.reduce((acc, red) => acc + red, 0) === i) {
-      console.log('These are the amstrong numbers:- ', i);
     }
   }
 
   // Problem 15
-  const arr2 = [9];
+
   const input = 5;
-  let i = 0;
-  while (i < input - 1) {
+  let sum6 = 0;
+  let i = 1;
+  while (i <= input) {
     console.log(i);
-    arr2.push(arr2[i] * 10 + 9);
+    sum6 = sum6 + (Math.pow(10, i) - 1);
+
     i++;
   }
-  const total = arr2.reduce((prev, cur) => prev + cur, 0);
-  console.log('This is the total of the problem 15', total);
+  console.log('This is the total of the problem 15', sum6);
 
   // Problem 16
-  const primes = [];
 
+  const primes = [];
   for (let i = 2; i < 100; i++) {
     let isPrime = true;
     for (let j = 2; j * j <= i; j++) {
@@ -138,13 +141,12 @@ export function problems() {
     }
     if (isPrime) {
       primes.push(i);
-      console.log(i);
     }
   }
-
   console.log(primes);
 
   // Problem 17
+
   const userInput = 'sam';
   const alphabets = 'abcdefghijklmnopqrstuvwxyz';
   const arr5 = [];
@@ -160,7 +162,8 @@ export function problems() {
   console.log(total16);
 
   // Problem 18
-  const passPhrase = 'aa aa bb cc dd ee';
+
+  const passPhrase = 'aaa aa bb cc dd ee';
   const words = passPhrase.split(' ');
   console.log('This is split', words);
 
@@ -186,7 +189,7 @@ export function problems() {
   }
 
   // Problem 19
-  const captcha = '1122';
+  const captcha = '1122211';
 
   let sum2 = 0;
   const lengt = captcha.length;
@@ -204,16 +207,19 @@ export function problems() {
 
   // Problem 20
 
-  const inpu = `5\t1\t9\t5\n7\t5\t3\n2\t4\t6\t8`;
-  console.log(inpu);
+  const matrix = [
+    [5, 1, 9, 5],
+    [5, 7, 3],
+    [2, 4, 6, 8],
+  ];
+  console.log(matrix.length);
   let sum5 = 0;
 
-  const rows = inpu.split('\n');
-  console.log(rows);
-  for (let i = 0; i < rows.length; i++) {
-    const values = rows[i].split('\t').map(Number);
+  for (let i = 0; i < matrix.length; i++) {
+    const values = matrix[i];
     console.log(values);
     let min = values[0];
+    console.log(min);
     let max = values[0];
 
     for (let j = 1; j < values.length; j++) {
@@ -227,4 +233,25 @@ export function problems() {
     sum5 += max - min;
   }
   console.log('Sum of problem 20:', sum5);
+
+  // Splitting a string without using split inbuild function
+
+  const st = 'abbbb';
+  console.log(st.length);
+  let seperator = '';
+  let letters = '';
+  const arr6 = [];
+
+  for (let i = 0; i < st.length; i++) {
+    if (seperator === '') arr6.push(st[i]);
+    else {
+      if (st[i] !== seperator) letters += st[i];
+      if (st[i] === seperator || i === st.length - 1) {
+        arr6.push(letters);
+        letters = '';
+      }
+    }
+  }
+
+  console.log(arr6);
 }
