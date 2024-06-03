@@ -57,7 +57,7 @@ export function wordsCheck() {
 export function reverseNumber() {
   const input = 128;
   let count = 1;
-
+  // for getting the count of the digits
   // for (let i = 10; i <= input; i = i * 10) {
   //   count++;
   // }

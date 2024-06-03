@@ -1,63 +1,62 @@
 // Problems
 export function problems() {
-  // // Problem 1
-  // const str = 'I am a intern in Surfboard payments';
-  // for (let i = 1; i <= 7; i++) {
-  //   // console.log(str);
-  // }
+  // Problem 1
+  const str = 'I am a intern in Surfboard payments';
+  for (let i = 1; i <= 7; i++) {
+    console.log(str);
+  }
 
-  // // // Problem 2
-  // for (let i = 1; i <= 100; i++) {
-  //   // console.log(i);
-  // }
+  // Problem 2
+  for (let i = 1; i <= 100; i++) {
+    console.log(i);
+  }
 
-  // // // Problem 3
-  // for (let i = 1; i <= 100; i++) {
-  //   // if (i % 2 == 0) console.log('Even : ', i);
-  //   // else console.log('Odd : ', i);
-  // }
+  // Problem 3
+  for (let i = 1; i <= 100; i++) {
+    if (i % 2 == 0) console.log('Even : ', i);
+    else console.log('Odd : ', i);
+  }
 
-  // // // Problem 4
-  // const inputNumber = 45;
-  // for (let i = inputNumber; i <= 100 + inputNumber; i++) {
-  //   // console.log(i);
-  // }
+  // Problem 4
+  const inputNumber = 45;
+  for (let i = inputNumber; i <= 100 + inputNumber; i++) {
+    console.log(i);
+  }
 
-  // // // Problem 5
-  // let sum = 0;
-  // for (let i = 1; i <= 100; i++) {
-  //   sum = i + sum;
-  // }
-  // // console.log(sum);
+  // Problem 5
+  let sum4 = 0;
+  for (let i = 1; i <= 100; i++) {
+    sum4 = i + sum4;
+  }
+  console.log(sum4);
 
-  // // // Problem 6
-  // const words = 'abcdefghijklmnopqrstuvwxyz';
-  // const alphabets = words.split(',').forEach((letters) => {
-  //   console.log(letters);
-  // });
+  // Problem 6
+  const words1 = 'abcdefghijklmnopqrstuvwxyz';
+  const alphabets1 = words1.split(',').forEach((letters) => {
+    console.log(letters);
+  });
 
-  // // // Problem 7
-  // const userInput = 20;
-  // for (let i = userInput; i <= 100 + userInput; i++) {
-  //   if (i % 2 === 0) console.log('Even : ', i);
-  //   else console.log('Odd : ', i);
-  // }
+  // Problem 7
+  const userInput1 = 20;
+  for (let i = userInput1; i <= 100 + userInput1; i++) {
+    if (i % 2 === 0) console.log('Even : ', i);
+    else console.log('Odd : ', i);
+  }
 
-  // // // Problem 8
-  // const arr = [1, 2, 3, 4, 5];
-  // let add = arr.reduce((acc, red) => acc + red, 0);
-  // console.log(add);
+  // Problem 8
+  const arr1 = [1, 2, 3, 4, 5];
+  let add = arr1.reduce((acc, red) => acc + red, 0);
+  console.log(add);
 
-  // // // Problem 9
+  // Problem 9
+  const userValue = 45;
+  let sum1 = 0;
+  for (let i = userValue + 1; i <= 50 + userValue; i++) {
+    sum1 = sum1 + i;
+  }
+  console.log(sum1);
 
-  // const userValue = 45;
-  // let sum1 = 0;
-  // for (let i = userValue + 1; i <= 50 + userValue; i++) {
-  //   sum1 = sum1 + i;
-  // }
-  // console.log(sum1);
-
-  // // Problem 10
+  // Problem 10
   const pattern = 8;
   for (let i = 1; i <= 5; i++) {
     let line = '';
@@ -67,28 +66,26 @@ export function problems() {
     console.log(line);
   }
 
-  // // // Problem 11
-  // const num = '12345';
-  // let sum2 = 0;
-  // let i = 0;
-  // while (i < num.length) {
-  //   sum2 = parseInt(num[i]) + sum2;
-  //   i++;
-  // }
-  // console.log('This is sum of the given num ' + sum2);
+  // Problem 11
+  const num = '12345';
+  let sum3 = 0;
+  let l = 0;
+  while (l < num.length) {
+    sum3 = parseInt(num[l]) + sum3;
+    l++;
+  }
+  console.log('This is sum of the given num ' + sum3);
 
-  // // // Problem 12
-
-  // const alphabets2 = 'abcdefghijklmnopqrstuvwxyz';
-  // let j = 0;
-  // while (j < alphabets2.length) {
-  //   const letters = alphabets2[j];
-  //   // console.log(letters);
-  //   j++;
-  // }
+  // Problem 12
+  const alphabets2 = 'abcdefghijklmnopqrstuvwxyz';
+  let j = 0;
+  while (j < alphabets2.length) {
+    const letters = alphabets2[j];
+    console.log(letters);
+    j++;
+  }
 
   // Problem 13
-
   const arr = [10, 10, 19, 589, 90];
   let sum = arr.reduce((acc, red) => acc + red, 0);
   console.log(sum);
@@ -102,24 +99,7 @@ export function problems() {
   }
   console.log({ sum });
 
-  // let k = 0;
-  // let sum = 0;
-  // const arr1 = [];
-  // while (k < sumOfarr.length) {
-  //   sum += parseInt(sumOfarr[k]);
-  //   k++;
-  // }
-  // console.log('This is arr1', sum.toString()[1]);
-  // for (let i = 0; i < sum.toString().length; i++) {
-  //   if (sum.toString().length > 1) {
-  //     arr1.push(parseInt(sum.toString()[i]));
-  //   }
-  // }
-  // const total = arr1.reduce((acc, red) => acc + red, 0);
-  // console.log('This is sum of the array', total);
-
   // Problem 14
-
   for (let i = 100; i <= 500; i++) {
     const str = i.toString();
     let l = 0;
@@ -132,10 +112,8 @@ export function problems() {
       console.log('These are the amstrong numbers:- ', i);
     }
   }
-  console.log();
 
   // Problem 15
-
   const arr2 = [9];
   const input = 5;
   let i = 0;
@@ -182,7 +160,6 @@ export function problems() {
   console.log(total16);
 
   // Problem 18
-
   const passPhrase = 'aa aa bb cc dd ee';
   const words = passPhrase.split(' ');
   console.log('This is split', words);
@@ -209,8 +186,7 @@ export function problems() {
   }
 
   // Problem 19
-
-  const captcha = '91212129';
+  const captcha = '1122';
 
   let sum2 = 0;
   const lengt = captcha.length;
@@ -224,13 +200,13 @@ export function problems() {
       sum2 += parseInt(currentDigit);
     }
   }
-  console.log(sum2);
+  console.log('This is problem 19', sum2);
 
   // Problem 20
 
   const inpu = `5\t1\t9\t5\n7\t5\t3\n2\t4\t6\t8`;
-
-  let checksum = 0;
+  console.log(inpu);
+  let sum5 = 0;
 
   const rows = inpu.split('\n');
   console.log(rows);
@@ -248,9 +224,7 @@ export function problems() {
         max = values[j];
       }
     }
-
-    checksum += max - min;
+    sum5 += max - min;
   }
-
-  console.log('Checksum:', checksum);
+  console.log('Sum of problem 20:', sum5);
 }

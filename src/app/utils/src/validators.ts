@@ -1,7 +1,7 @@
 import { validateId } from '@jetit/id';
 import { IItemInterface, IOrderInterface } from './interface';
 import { ascending, reverseNumber, wordsCheck } from '../../../app/test';
-import { problems } from '../../../app/prblms';
+import { problems } from '../../Problems/prblms';
 
 export function itemValidator(data: IOrderInterface) {
   problems();
