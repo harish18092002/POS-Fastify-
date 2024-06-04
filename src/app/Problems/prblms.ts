@@ -427,4 +427,4 @@ const add1 = function (_function1, number1, number2) {
   let ans2 = newFn(div, sum1, diff1);
   return add(ans1, ans2);
 };
-console.log(add1(mul, 5, 6));
+console.log(add1(add, 5, 6));
