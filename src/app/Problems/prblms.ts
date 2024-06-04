@@ -1,4 +1,22 @@
-// import { sep } from 'path';
+// const myObject = {
+//   booleanKey: true,
+//   arrayKey: [1, 2, 3, 4, 5],
+//   stringKey: "example string",
+//   add: function(a, b) {
+//     return a + b;
+//   }
+// };
+
+// // Represent the object elements in an array
+// const myArray = [
+//   myObject.booleanKey,
+//   myObject.arrayKey,
+//   myObject.stringKey,
+//   myObject.add
+// ];
+
+// // Output the array
+// console.log(myArray);
 
 // // Problems
 export function problems() {
@@ -221,3 +239,192 @@ export function problems() {
 
   console.log(arr6);
 }
+
+// Problems set 3
+// Problem 2
+
+{
+  const x = 'a' + 'b';
+  console.log(x);
+}
+
+// Problem 3
+function division(dividend, divisor) {
+  let quotient = dividend / divisor;
+  let remainder = dividend % divisor;
+
+  return remainder;
+}
+
+console.log(division(4, 2));
+
+// Problem 4
+
+function sentence(a, b, c, d) {
+  const finalSentence = a + ' ' + b + ' ' + c + ' ' + d;
+  return finalSentence;
+}
+let g = 'Frame';
+let h = 'a';
+let i = 'sentence';
+let j = 'on';
+let k = 'your';
+let l = 'own';
+
+console.log(sentence(g, h, i, j));
+
+// Problem 6
+const sq = function (a) {
+  return a * a;
+};
+const cu = function (b) {
+  return b * b * b;
+};
+function di(j, k) {
+  return j / k;
+}
+function problem(a, b) {
+  const integer1 = sq(a);
+  const integer2 = cu(b);
+  const integer3 = sq(a * b);
+  const integer4 = di(a, b);
+  return integer1 + integer2 + integer3 + integer4;
+}
+const calculation = function (g, h) {
+  const answer = problem(g, h);
+  return answer;
+};
+
+console.log(calculation(10, 5));
+
+// Problem 7
+
+function mathematicalOperation(a, b) {
+  let sum = a + b;
+  let subtract = a - b;
+  let multiplication = a * b;
+  let division = a / b;
+  let square1 = a * a;
+  let square2 = b * b;
+  let sumAll = sum + subtract + multiplication + division + square1 + square2;
+  let operations = {
+    sum: sum,
+    subtract: subtract,
+    multiplication: multiplication,
+    division: division,
+    square1: square1,
+    square2: square2,
+    sumAll: sumAll,
+  };
+  return operations;
+}
+
+console.log(mathematicalOperation(2, 4));
+
+// Problem 8
+const class10CMarks = {
+  Maths: [89, 90, 97, 45, 72, 80, 76],
+  Science: [93, 88, 83, 54, 65, 77, 70],
+  SocialScience: [85, 94, 87, 40, 69, 70, 81],
+  English: [88, 84, 89, 60, 79, 83, 81],
+  Language: [84, 87, 92, 73, 80, 79, 84],
+};
+
+console.log(class10CMarks);
+
+// Problem 9
+
+const obj = {
+  courseName: 'Internship',
+  items: { fruit: 'Apple', colour: 'red' },
+  booleanValue: true,
+  arrayValue: [1, 2, 3, 4, 5],
+  str: '23lock',
+  func: add3(1, 3),
+};
+
+function add3(a, b) {
+  return a + b;
+}
+console.log(obj);
+// Problem 10
+
+let teamDetails = {
+  batsmen: 5,
+  bowlers: 5,
+  allRounders: 1,
+  subs: 4,
+};
+function teamInfo(a, b, c) {
+  a.players = b;
+  a.order = c;
+  return a;
+}
+let players11 = [
+  'Sachin',
+  'Sehwag',
+  'Gambhir',
+  'Dravid',
+  'Ganguly',
+  'Yuvraj',
+  'Harbhajan',
+  'Zaheer',
+  'Nehra',
+  'Kumble',
+  'Irfan',
+];
+let battingOrder = {
+  '1': 'Sehwag',
+  '2': 'Gambhir',
+  '3': 'Sachin',
+  '4': 'Dravid',
+  '5': 'Ganguly',
+  '6': 'Yuvraj',
+  '7': 'Irfan',
+  '8': 'Harbhajan',
+  '9': 'Kumble',
+  '10': 'Zaheer',
+  '11': 'Nehra',
+};
+console.log(teamInfo(teamDetails, players11, battingOrder));
+
+// Problem 11
+const groceryList = {
+  tomato: '1 kg',
+  potato: '1/2 kg',
+  calculatePrice: function (groceryList, price, discount) {
+    groceryList.price = price;
+    groceryList.discount = discount;
+    return groceryList;
+  },
+};
+
+groceryList.calculatePrice(groceryList, 55, 25);
+
+console.log(groceryList);
+
+// Problem 12
+
+const add = function (number1, number2) {
+  return number1 + number2;
+};
+const sub = function (number1, number2) {
+  return number1 - number2;
+};
+const mul = function (number1, number2) {
+  return number1 * number2;
+};
+function div(number1, number2) {
+  return number1 / number2;
+}
+const add1 = function (_function1, number1, number2) {
+  function newFn(_function2, number1, number2) {
+    return _function2(number1, number2);
+  }
+  let sum1 = _function1(number1, number2);
+  let diff1 = sub(number2, number1);
+  let ans1 = newFn(mul, sum1, diff1);
+  let ans2 = newFn(div, sum1, diff1);
+  return add(ans1, ans2);
+};
+console.log(add1(mul, 5, 6));
