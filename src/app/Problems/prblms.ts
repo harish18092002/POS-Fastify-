@@ -493,7 +493,7 @@ for (let i = arr7.length - 1; i >= 0; i--) {
 
 // 15
 
-const num1 = 20;
+const num1 = 12;
 let var1 = 0;
 let var2 = 1;
 
@@ -507,3 +507,45 @@ for (let i = 0; i < num1 - 2; i++) {
 // console.log(arr8);
 
 // 16
+
+const matrix1 = [
+  [1, 2, 3],
+  [4, 5, 6],
+];
+const matrix2 = [
+  [1, 2, 3],
+  [4, 5, 6],
+];
+
+let newMatrix = [[], []];
+let sum = 0;
+let min = Infinity;
+let max = 0;
+if (matrix1.length != matrix2.length)
+  console.log('Both matrix are not in same length so addition cannot be done');
+else {
+  for (let i = 0; i < matrix1.length; i++) {
+    let valuesM1 = matrix1[i];
+    let valuesM2 = matrix2[i];
+
+    if (valuesM1.length != valuesM2.length) {
+      console.log(
+        'Both matrix are not in same length so addition cannot be done'
+      );
+      break;
+    }
+    for (let j = 0; j < valuesM1.length; j++) {
+      newMatrix[i][j] = valuesM1[j] + valuesM2[j];
+      if (newMatrix[i][j] < min) min = newMatrix[i][j];
+      if (newMatrix[i][j] > max) max = newMatrix[i][j];
+    }
+    console.log({ max, min });
+    sum = max - min;
+  }
+
+  console.log('This is the added matrix', newMatrix);
+  console.log(
+    'This is the total of the max value - min value from new matrix',
+    sum
+  );
+}
