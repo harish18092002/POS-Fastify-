@@ -466,6 +466,11 @@ console.log('This is the number of palindromes in the string:', count);
 console.log('Length of the biggest palindrome:', maxDiff);
 console.log('This is the biggest palindrome:', longestPalindrome);
 
+// const arr7 = [1, 2, 3, 4, 5];
+const num = 5;
+const arr8 = [];
+for (let i = 1; i <= num; i++) arr8.push(i);
+console.log(arr8);
 const arr7 = [1, 2, 3, 4, 5];
 let input = 15;
 let max = arr7[arr7.length - 1];
@@ -482,33 +487,3 @@ for (let i = arr7.length - 1; i >= 0; i--) {
     }
   }
 }
-// let maxNumber = arr7[arr7.length - 1];
-// const total = arr7.reduce((cur, prev) => cur + prev, 0);
-// if (input > total)
-//   console.log('Input number is greater than the sum of array number');
-// else {
-//   for (let i = arr7.length - 1; i >= 0; i--) {
-//     if (input === arr7[i]) {
-//       console.log('The given number is present in ', i);
-//       break;
-//     } else if (maxNumber + arr7[i] === input) {
-//       console.log('The given number is present in ', arr7.length - 1, i);
-//     } else {
-//       for (let j = arr7.length - 1; j >= 0; j--) {
-//         if (
-//           maxNumber + arr7[i] + arr7[j] === input &&
-//           i != arr7.length - 1 &&
-//           j != arr7.length - 1 &&
-//           i != j
-//         ) {
-//           console.log(
-//             'These are the indexes where the sum can be formed : ',
-//             arr7.length - 1,
-//             i,
-//             j
-//           );
-//         }
-//       }
-//     }
-//   }
-// }
