@@ -423,6 +423,7 @@ console.log(add1(add, 5, 6));
 //   }
 // }
 
+//13
 const input3 = 'madamzmalayyalam';
 let count = 0;
 let maxDiff = 0;
@@ -466,6 +467,7 @@ console.log('This is the number of palindromes in the string:', count);
 console.log('Length of the biggest palindrome:', maxDiff);
 console.log('This is the biggest palindrome:', longestPalindrome);
 
+// 14
 // const arr7 = [1, 2, 3, 4, 5];
 const num = 5;
 let input = 16;
@@ -488,3 +490,20 @@ for (let i = arr7.length - 1; i >= 0; i--) {
     }
   }
 }
+
+// 15
+
+const num1 = 20;
+let var1 = 0;
+let var2 = 1;
+
+for (let i = 0; i < num1 - 2; i++) {
+  let total3 = var1 + var2;
+  if (i == 0) console.log(var1);
+  else console.log(var1);
+  var1 = var2;
+  var2 = total3;
+}
+// console.log(arr8);
+
+// 16
