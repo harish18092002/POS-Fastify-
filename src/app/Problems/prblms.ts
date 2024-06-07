@@ -197,7 +197,7 @@ export function problems() {
     sum5 += max - min;
   }
   console.log('Sum of problem 20:', sum5);
-  //   // Splitting a string without using split inbuild function
+  //  Splitting a string without using split inbuild function
   const st = 'abbbb';
   console.log(st.length);
   let seperator = '';
@@ -404,26 +404,26 @@ const add1 = function (_function1, number1, number2) {
   return add(ans1, ans2);
 };
 console.log(add1(add, 5, 6));
+// 13 checking whether the single word is a palindrome or not
+const str = 'maam';
+let m = 0;
+let count1 = 0;
+let n = str.length - 1;
+while (m < n) {
+  console.log({ m, n });
+  if (str[m] !== str[n]) {
+    console.log('Not a palindrom');
+    break;
+  }
+  m++;
+  n--;
+  if (m >= n) {
+    count1++;
+    console.log('Palindrom');
+  }
+}
 
-// const str = 'maam';
-// let m = 0;
-// let count = 0;
-// let n = str.length - 1;
-// while (m < n) {
-//   console.log({ m, n });
-//   if (str[m] !== str[n]) {
-//     console.log('Not a palindrom');
-//     break;
-//   }
-//   m++;
-//   n--;
-//   if (m >= n) {
-//     count++;
-//     console.log('Palindrom');
-//   }
-// }
-
-//13
+//13 a
 const input3 = 'madamzmalayyalam';
 let count = 0;
 let maxDiff = 0;
@@ -504,7 +504,6 @@ for (let i = 0; i < num1 - 2; i++) {
   var1 = var2;
   var2 = total3;
 }
-// console.log(arr8);
 
 // 16
 const matrix1 = [
@@ -516,7 +515,7 @@ const matrix2 = [
   [4, 5, 6],
 ];
 
-let newMatrix = [[], []];
+let newMatrix = [];
 let sum = 0;
 let min = Infinity;
 let max = 0;
@@ -524,6 +523,8 @@ if (matrix1.length != matrix2.length)
   console.log('Both matrix are not in same length so addition cannot be done');
 else {
   for (let i = 0; i < matrix1.length; i++) {
+    let addm = 0;
+    let matrixArr = [];
     let valuesM1 = matrix1[i];
     let valuesM2 = matrix2[i];
 
@@ -532,14 +533,16 @@ else {
         'Both matrix are not in same length so addition cannot be done'
       );
       break;
+    } else {
+      for (let j = 0; j < valuesM1.length; j++) {
+        addm = valuesM1[j] + valuesM2[j];
+        if (addm < min) min = addm;
+        if (addm > max) max = addm;
+        matrixArr.push(addm);
+      }
     }
-    for (let j = 0; j < valuesM1.length; j++) {
-      newMatrix[i][j] = valuesM1[j] + valuesM2[j];
-      if (newMatrix[i][j] < min) min = newMatrix[i][j];
-      if (newMatrix[i][j] > max) max = newMatrix[i][j];
-    }
-    console.log({ max, min });
     sum = max - min;
+    newMatrix.push(matrixArr);
   }
 
   console.log('This is the added matrix', newMatrix);
@@ -573,10 +576,136 @@ else {
         addm += matrix3[i][k] * matrix4[k][j];
       }
       matrixArr.push(addm);
-      console.log(addm);
     }
-    console.log(matrixArr);
     result.push(matrixArr);
   }
 }
 console.log(result);
+
+// Subtraction
+
+const matrix5 = [
+  [1, 2, 3],
+  [4, 5, 4],
+  [4, 5, 5],
+];
+const matrix6 = [
+  [4, 5, 7],
+  [1, 2, 4],
+  [1, 2, 2],
+];
+
+let newMatrix1 = [];
+
+if (matrix5.length != matrix6.length) {
+  console.log(
+    'Both matrix are not in same length so subtraction cannot be done'
+  );
+} else {
+  for (let i = 0; i < matrix5.length; i++) {
+    let addm = 0;
+    let matrixArr = [];
+    let valuesM1 = matrix5[i];
+    let valuesM2 = matrix6[i];
+
+    if (valuesM1.length != valuesM2.length) {
+      console.log(
+        'Both matrix are not in same length so subtraction cannot be done'
+      );
+      break;
+    } else {
+      for (let j = 0; j < valuesM1.length; j++) {
+        addm = valuesM1[j] - valuesM2[j];
+        matrixArr.push(addm);
+      }
+
+      newMatrix1.push(matrixArr);
+    }
+  }
+  console.log('This is the subtracted matrix', newMatrix1);
+}
+
+// Pattern
+const pattern = '*';
+for (let i = 5; i >= 1; i--) {
+  let line = '';
+  for (let j = 1; j <= i; j++) {
+    line = line + pattern;
+  }
+  console.log(line);
+}
+
+// Stone paper scissor problem
+
+let p1 = 'sc';
+let p2 = 'sc';
+if (
+  (p1 === 'st' && p2 === 'sc') ||
+  (p1 === 'sc' && p2 === 'pa') ||
+  (p1 === 'pa' && p2 === 'st')
+)
+  console.log('P1 wins');
+else if (p1 === p2) console.log('Draw');
+else console.log('P2 wins');
+
+//Problems
+
+const arr0 = [1, 4, 3, 2, 8];
+const even = [];
+const odd = [];
+
+for (let i = 0; i < arr0.length; i++) {
+  if (arr0[i] % 2 === 0) even.push(arr0[i]);
+  else odd.push(arr0[i]);
+}
+if (even.length > odd.length) console.log('Even number are more in arr');
+else if (even.length === odd.length)
+  console.log('Odd and even numbers in array are equal');
+else console.log('Odd numbers  are more in array');
+console.log({ odd, even });
+
+// Problems 2
+// Trolls are attacking your comment section!
+
+// A common way to deal with this situation is to remove all of the vowels from the trolls' comments, neutralizing the threat.
+// Your task is to write a function that takes a string and return a new string with all vowels removed.
+// For example, the string "This website is for losers LOL!" would become "Ths wbst s fr lsrs LL!".
+// Note: for this kata y isn't considered a vowel.
+
+const str0 = 'This website is for losers LOL!';
+const splits = [];
+splits.push(str0.replace(/[aeiou]/gi, ''));
+console.log(splits.join(''));
+
+// Problem 3
+
+// In a factory a printer prints labels for boxes. For one kind of boxes the printer
+// has to use colors which, for the sake of simplicity, are named with letters from
+// a to m.
+
+// The colors used by the printer are recorded in a control string.
+//  For example a "good" control string would be aaabbbbhaijjjm meaning that the
+// printer used three times color a, four times color b, one time color h then one
+// time color a...
+
+// Sometimes there are problems: lack of colors, technical malfunction and a "bad"
+// control string is produced e.g. aaaxbbbbyyhwawiwjjjwwm with letters not from a to
+//  m.
+
+// You have to write a function printer_error which given a string will
+// return the error rate of the printer as a string representing a rational whose
+// numerator is the number of errors and the denominator the length of the control
+// string. Don't reduce this fraction to a simpler expression.
+
+// The string has a length greater or equal to one and contains only letters from
+// ato z.
+
+// Examples:
+// s="aaabbbbhaijjjm"
+// printer_error(s) => "0/14"
+
+// s="aaaxbbbbyyhwawiwjjjwwm"
+// printer_error(s) => "8/22"
+
+const printerCode = 'aaaxbbbbyyhwawiwjjjwwm';
+const validCode = 'abcdefghijklm';
