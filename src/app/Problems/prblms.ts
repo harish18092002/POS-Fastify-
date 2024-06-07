@@ -725,14 +725,17 @@ console.log('Printer Error = ', error, '/', printerCode.length);
 
 // Problem 4
 
-// Take 2 strings s1 and s2 including only letters from a to z. Return
-// a new sorted string, the longest possible, containing distinct letters - each
-//  taken only once - coming from s1 or s2.
+// You get an array of numbers, return the sum of all of the positives ones.
 
-// Examples:
-// a = "xyaabbbccccdefww"
-// b = "xxxxyyyyabklmopq"
-// longest(a, b) -> "abcdefklmopqwxy"
+// Example [1,-4,7,12] => 1 + 7 + 12 = 20
 
-// a = "abcdefghijklmnopqrstuvwxyz"
-// longest(a, a) -> "abcdefghijklmnopqrstuvwxyz"
+// Note: if there is nothing to sum, the sum is default to 0.
+
+const inp = [1, -4, 7, 12];
+let sums = 0;
+for (let i = 0; i < inp.length; i++) {
+  if (inp[i] > 0) sums += inp[i];
+}
+console.log(sums);
+
+// Problem 5
