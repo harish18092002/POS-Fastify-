@@ -556,29 +556,33 @@ const matrix3 = [
   [4, 5, 4],
   [4, 5, 5],
 ];
-
 const matrix4 = [
   [4, 5, 6],
   [1, 2, 7],
-  [4, 5, 8],
+  [1, 2, 7],
 ];
 let result = [];
-
-for (let i = 0; i < matrix3[0].length; i++) {
-  result[i] = [];
-  console.log(result);
-  for (let j = 0; j < matrix4.length; j++) {
-    result[i][j] = 0;
-    console.log(result);
-  }
-}
-
-for (let i = 0; i < matrix3.length; i++) {
-  for (let j = 0; j < matrix4[0].length; j++) {
-    for (let k = 0; k < matrix4.length; k++) {
-      result[i][j] += matrix3[i][k] * matrix4[k][j];
+if (matrix3[0].length != matrix4.length)
+  console.log('Matrix cannot be multiplied');
+else {
+  for (let i = 0; i < matrix3.length; i++) {
+    let matrixArr = [];
+    for (let j = 0; j < matrix4[0].length; j++) {
+      let addm = 0;
+      for (let k = 0; k < matrix4.length; k++) {
+        addm += matrix3[i][k] * matrix4[k][j];
+      }
+      matrixArr.push(addm);
     }
+    result.push(matrixArr);
   }
 }
-
 console.log(result);
+// result[i][j] += matrix3[i][k] * matrix4[k][j];
+// for (let i = 0; i < matrix3[0].length; i++) {
+//   result[i] = [];
+
+//   for (let j = 0; j < matrix4.length; j++) {
+//     result[i][j] = 0;
+//   }
+// }
