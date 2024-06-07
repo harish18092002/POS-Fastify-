@@ -1,3 +1,5 @@
+import { errorCodes } from 'fastify';
+
 // // Problems
 export function problems() {
   //   // Problem 1
@@ -709,3 +711,13 @@ console.log(splits.join(''));
 
 const printerCode = 'aaaxbbbbyyhwawiwjjjwwm';
 const validCode = 'abcdefghijklm';
+let error = 0;
+for (let i = 0; i < printerCode.length; i++) {
+  for (let j = 0; j < validCode.length; j++) {
+    if (printerCode[i] === validCode[j]) {
+      break;
+    } else {
+    }
+  }
+}
+console.log('Printer Error = ', error, '/', printerCode.length);
