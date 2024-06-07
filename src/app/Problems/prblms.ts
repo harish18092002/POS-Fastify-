@@ -573,16 +573,10 @@ else {
         addm += matrix3[i][k] * matrix4[k][j];
       }
       matrixArr.push(addm);
+      console.log(addm);
     }
+    console.log(matrixArr);
     result.push(matrixArr);
   }
 }
 console.log(result);
-// result[i][j] += matrix3[i][k] * matrix4[k][j];
-// for (let i = 0; i < matrix3[0].length; i++) {
-//   result[i] = [];
-
-//   for (let j = 0; j < matrix4.length; j++) {
-//     result[i][j] = 0;
-//   }
-// }
