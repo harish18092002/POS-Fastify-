@@ -756,13 +756,35 @@ for (let i = 0; i < input4.length; i++) {
 console.log(count2);
 
 // Problem 6
+// You are going to be given a word. Your job is to return the middle
+//  character of the word. If the word's length is odd, return the middle character.
+//  If the word's length is even, return the middle 2 characters.
 
-// ATM machines allow 4 or 6 digit PIN codes and PIN codes cannot contain anything
-// but exactly 4 digits or exactly 6 digits.
+// #Examples:
 
-// If the function is passed a valid PIN string, return true, else return false.
+// Kata.getMiddle("test") should return "es"
 
-// Examples (Input --> Output)
-// "1234"   -->  true
-// "12345"  -->  false
-// "a234"   -->  false
+// Kata.getMiddle("testing") should return "t"
+
+// Kata.getMiddle("middle") should return "dd"
+
+// Kata.getMiddle("A") should return "A"
+// #Input
+
+// A word (string) of length 0 < str < 1000 (In javascript you may get slightly
+// more than 1000 in some test cases due to an error in the test cases). You do not
+// need to test for this. This is only here to tell you that you do not need to
+// worry about your solution timing out.
+
+// #Output
+
+// The middle character(s) of the word represented as a string.
+const input5 = 'Abce';
+if (input5.length % 2 === 0) {
+  const i = input5.length / 2;
+  console.log(input5.slice(i - 1, i + 1));
+} else if (input5.length === 1) console.log(input5);
+else {
+  const j = Math.floor(input5.length / 2);
+  console.log(input5.slice(j, j + 1));
+}
