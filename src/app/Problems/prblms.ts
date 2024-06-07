@@ -739,3 +739,30 @@ for (let i = 0; i < inp.length; i++) {
 console.log(sums);
 
 // Problem 5
+// Return the number (count) of vowels in the given string.
+
+// We will consider a, e, i, o, u as vowels for this Kata (but not y).
+
+// The input string will only consist of lower case letters and/or spaces.
+
+const input4 = 'abcdefghijklmnopqrstuvwxyz';
+const vowels = 'aeiou';
+let count2 = 0;
+for (let i = 0; i < input4.length; i++) {
+  for (let j = 0; j < vowels.length; j++) {
+    if (input4[i] === vowels[j]) count2++;
+  }
+}
+console.log(count2);
+
+// Problem 6
+
+// ATM machines allow 4 or 6 digit PIN codes and PIN codes cannot contain anything
+// but exactly 4 digits or exactly 6 digits.
+
+// If the function is passed a valid PIN string, return true, else return false.
+
+// Examples (Input --> Output)
+// "1234"   -->  true
+// "12345"  -->  false
+// "a234"   -->  false
