@@ -1,5 +1,3 @@
-import { errorCodes } from 'fastify';
-
 // // Problems
 export function problems() {
   //   // Problem 1
@@ -933,3 +931,106 @@ console.log(t);
 
 const str1 = 'I love arrays they are my favorite';
 console.log(str1.split(' '));
+
+// problem 13
+
+// Create a function that accepts a string and a single character,
+//  and returns an integer of the count of occurrences the 2nd argument is found
+// in the first one.
+
+// If no occurrences can be found, a count of 0 should be returned.
+
+// ("Hello", "o")  ==>  1
+// ("Hello", "l")  ==>  2
+// ("", "z")       ==>  0
+// str_count("Hello", 'o'); // returns 1
+// str_count("Hello", 'l'); // returns 2
+// str_count("", 'z'); // returns 0
+// Notes
+// The first argument can be an empty string
+// In languages with no distinct character data type, the second argument will be
+//  a string of length 1
+
+const str10 = 'Hello';
+const letter = 'l';
+let count3 = 0;
+for (let i = 0; i < letter.length; i++) {
+  for (let j = 0; j < str10.length; j++) {
+    if (letter[i] === str10[j]) count3++;
+  }
+}
+console.log(count3);
+
+// Problem 14
+
+// The Story:
+// Bob is working as a bus driver. However, he has become extremely popular
+// amongst the city's residents. With so many passengers wanting to get aboard his
+// bus, he sometimes has to face the problem of not enough space left on the bus!
+// He wants you to write a simple program telling him if he will be able to fit all
+// the passengers.
+
+// Task Overview:
+// You have to write a function that accepts three parameters:
+
+// cap is the amount of people the bus can hold excluding the driver.
+// on is the number of people on the bus excluding the driver.
+// wait is the number of people waiting to get on to the bus excluding the driver.
+// If there is enough space, return 0, and if there isn't, return the number of
+// passengers he can't take.
+
+// Usage Examples:
+// cap = 10, on = 5, wait = 5 --> 0 # He can fit all 5 passengers
+// cap = 100, on = 60, wait = 50 --> 10 # He can't fit 10 of the 50 waiting
+
+// Test cases
+// describe('Tests: ', () => {
+//   it('Example Tests: ', () => {
+//     assert.equal(enough(10, 5, 5), 0);
+//     assert.equal(enough(100, 60, 50), 10);
+//     assert.equal(enough(50, 15, 10), 0);
+//   });
+// });
+
+const cap = 100;
+const on = 60;
+const wait = 50;
+let ans = 0;
+let space = cap - on;
+if (space >= wait) {
+  ans = 0;
+} else {
+  ans = wait - space;
+}
+console.log(ans);
+
+// Problem 15
+
+// altERnaTIng cAsE <=> ALTerNAtiNG CaSe
+// Define String.prototype.toAlternatingCase (or a similar function/method such as
+//   to_alternating_case/toAlternatingCase/ToAlternatingCase in your selected language;
+//    see the initial solution for details) such that each lowercase letter becomes
+//    uppercase and each uppercase letter becomes lowercase. For example:
+
+// toAlternatingCase("hello world") === "HELLO WORLD"
+// toAlternatingCase("HELLO WORLD") === "hello world"
+// toAlternatingCase("hello WORLD") === "HELLO world"
+// toAlternatingCase("HeLLo WoRLD") === "hEllO wOrld"
+// toAlternatingCase("12345")       === "12345"                   // Non-alphabetical characters are unaffected
+// toAlternatingCase("1a2b3c4d5e")  === "1A2B3C4D5E"
+// toAlternatingCase("String.prototype.toAlternatingCase") === "sTRING.PROTOTYPE.
+// TOaLTERNATINGcASE"
+// As usual, your function/method should be pure, i.e. it should not mutate the
+// original string.
+
+const s = 'hello World';
+const splited = s.split('');
+
+const out = splited
+  .map((n) => {
+    if (n === n.toUpperCase()) {
+      return n.toLowerCase();
+    } else return n.toUpperCase();
+  })
+  .join('');
+console.log(out);
