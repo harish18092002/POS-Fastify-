@@ -3,3 +3,5 @@ export * from './src/create.order';
 export * from './src/get.order';
 export * from './src/update.order';
 export * from './src/payments.initiate';
+export * from './src/refund';
+export * from './src/initiate.payments';

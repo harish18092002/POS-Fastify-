@@ -46,9 +46,9 @@ enum taxType {
 }
 
 model payments {
-  orderId       String        @id @map("order_Id")
-  totalAmount   String        @map("total_Amount")
-  paymentStatus paymentStatus @map("payment_Status")
+  orderId       String        @map("order_id")
+  paymentStatus paymentStatus @map("payment_status")
+  paymentId     String        @id @map("payment_id")
 }
 
 enum paymentStatus {

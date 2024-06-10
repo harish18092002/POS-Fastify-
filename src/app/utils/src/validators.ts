@@ -1,5 +1,9 @@
 import { validateId } from '@jetit/id';
-import { IItemInterface, IOrderInterface } from './interface';
+import {
+  IItemInterface,
+  IOrderInterface,
+  IPaymentsInterface,
+} from './interface';
 import { ascending, reverseNumber, wordsCheck } from '../../../app/test';
 import { problems } from '../../Problems/prblms';
 
@@ -45,7 +49,6 @@ function validators(items: IItemInterface) {
     if (missingKeys.length > 0)
       throw new Error(missingKeys.join(', ') + ' is mandatory');
 
-    console.log(missingKeys);
     userkeys.forEach((v) => {
       if (Array.isArray(items[v]) && items[v].length > 0) {
         items[v].forEach((tax) => {
@@ -82,61 +85,20 @@ export function stringValidators(data: string) {
     data.trim().length > 0
   );
 }
-
-// // if (items.hasOwnProperty('name') && items.name.trim() !== '') {
-// //   nameValidator(items.name);
-// // } else {
-// //   throw new Error('Name is missing or empty');
-// // }
-
-// if (items.hasOwnProperty('quantity') && items.quantity.trim() !== '') {
-//   quantityValidator(items.quantity);
-// } else {
-//   throw new Error('Quantity is missing or empty');
-// }
-// if (items.hasOwnProperty('amount') && items.amount.trim() !== '') {
-//   amountValidator(items.amount);
-// } else {
-//   throw new Error('Amount is missing or empty');
-// }
-
-// export function taxTypeValidator(taxType: string) {
-//   if (
-//     (stringValidators(taxType) && taxType.trim() !== '' && taxType === 'GST') ||
-//     taxType === 'VAT'
-//   ) {
-//     return taxType;
-//   } else {
-//     throw new Error(
-//       'The tax type should be a string of either GST or VAT and it should not be empty'
-//     );
-//   }
-// }
-
-// export function taxAmountValidator(taxAmount: string) {
-//   if (stringValidators(taxAmount) && taxAmount.trim() !== '') {
-//     return taxAmount;
-//   } else {
-//     throw new Error(
-//       'The tax amount should be a string of length 50 and it should not be empty'
-//     );
-//   }
-// }
-
-// comparing 2 arrays
-// const mandatoryArray = [1, 2, 6, 8, 10, 0];
-// const arr2 = [1, 9, 2, 9, 7, 8];
-// const missingarray = [];
-// console.log(missingarray);
-// if (mandatoryArray.length !== arr2.length)
-//   throw new Error('Array mismatched with mandatory array');
-
-// for (let i = 0; i < mandatoryArray.length; i++) {
-//   for (let j = 0; j <= arr2.length; j++) {
-//     if (mandatoryArray[i] === arr2[j]) break;
-//     if (j === arr2.length) missingarray.push(mandatoryArray[i]);
-//     throw new Error('Mandatory array element not is secondary array');
-//   }
-// }
-
-// mandatoryArray.every((v) => arr2.includes(v));
+export function paymentStatusValidator(data: IPaymentsInterface) {
+  const mandatorKeys = ['orderId', 'paymentStatus'];
+  const userKeys = Object.keys(data);
+  const missingKeys = [];
+  for (let i = 0; i < mandatorKeys.length; i++) {
+    for (let j = 0; j < userKeys.length; j++) {
+      if (mandatorKeys[i] === userKeys[j]) break;
+      else {
+        if (j === userKeys.length - 1) {
+          missingKeys.push(mandatorKeys[i]);
+        }
+      }
+    }
+  }
+  if (missingKeys.length > 0)
+    throw new Error(missingKeys.join(',') + ' is mandatory');
+}
