@@ -831,13 +831,105 @@ else console.log('odd');
 
 // time = 11.8--> litres = 5
 
-export function litres(time: number): number {
-  let lit = 0;
-  for (let i = 1; i <= time; i++) lit += 0.5;
-  return Math.floor(lit);
-}
 const time = 11.8;
 let lit = 0;
 for (let i = 1; i <= time; i++) lit += 0.5;
 console.log(Math.floor(lit));
 console.log(Math.round(Math.pow(0.5, time)));
+
+// Problem 9
+
+// Given a set of numbers, return the additive inverse of each.
+// Each positive becomes negatives, and the negatives become positives.
+
+// [1, 2, 3, 4, 5] --> [-1, -2, -3, -4, -5]
+// [1, -2, 3, -4, 5] --> [-1, 2, -3, 4, -5]
+// [] --> []
+
+const array10 = [1, 2, 3, 4, 5];
+const ans3 = array10.map((n) => -n);
+console.log(ans3);
+
+// Problem 10
+// Kata Task
+// I have a cat and a dog.
+
+// I got them at the same time as kitten/puppy. That was humanYears years ago.
+
+// Return their respective ages now as [humanYears,catYears,dogYears]
+
+// NOTES:
+
+// humanYears >= 1
+// humanYears are whole numbers only
+// Cat Years
+// 15 cat years for first year
+// +9 cat years for second year
+// +4 cat years for each year after that
+// Dog Years
+// 15 dog years for first year
+// +9 dog years for second year
+// +5 dog years for each year after that
+
+// it("one", function() {
+//   assert.deepEqual(humanYearsCatYearsDogYears(1), [1,15,15]);
+// });
+
+// it("two", function() {
+//   assert.deepEqual(humanYearsCatYearsDogYears(2), [2,24,24]);
+// });
+
+// it("ten", function() {
+//   assert.deepEqual(humanYearsCatYearsDogYears(10), [10,56,64]);
+// });
+
+const input6 = 10;
+let dogAge = 0;
+let catAge = 0;
+
+for (let i = 1; i <= input6; i++) {
+  if (i == 1) {
+    dogAge += 15;
+    catAge += 15;
+  } else if (i === 2) {
+    dogAge += 9;
+    catAge += 9;
+  } else {
+    dogAge += 5;
+    catAge += 4;
+  }
+}
+const output = [];
+output.push(input6, catAge, dogAge);
+console.log(output);
+console.log({ dogAge, catAge });
+
+// Problem 11
+
+// Write a program that finds the summation of every number from 1 to num.
+// The number will always be a positive integer greater than 0. Your function only
+// needs to return the result, what is shown between parentheses in the example
+// below is how you reach that result and it's not part of it, see the sample
+// tests.
+
+// For example (Input -> Output):
+
+// 2 -> 3 (1 + 2)
+// 8 -> 36 (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8)
+
+const num10 = 8;
+let t = 0;
+for (let i = 1; i <= num10; i++) t += i;
+console.log(t);
+
+// Problem 12
+
+// Write a function to split a string and convert it into an array of words.
+
+// Examples (Input ==> Output):
+// "Robin Singh" ==> ["Robin", "Singh"]
+
+// "I love arrays they are my favorite" ==> ["I", "love", "arrays", "they", "are", "my", "favorite"]
+
+const str1 = 'I love arrays they are my favorite';
+console.log(str1.split(' '));
