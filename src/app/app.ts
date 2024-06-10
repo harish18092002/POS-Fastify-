@@ -1,6 +1,12 @@
 import Fastify from 'fastify';
 import { prismaPlugin } from './prismaPlugin/plugins/prismaPlugin';
-import { createOrder, getOrder, cancelOrder, updateOrder } from './routes';
+import {
+  createOrder,
+  getOrder,
+  cancelOrder,
+  updateOrder,
+  payments,
+} from './routes';
 
 export const fastify = Fastify();
 fastify.register(prismaPlugin);
@@ -20,6 +26,10 @@ const route: Record<string, Record<string, any>> = {
   uppdateOrder: {
     url: '/update/order',
     callBack: updateOrder,
+  },
+  payments: {
+    url: '/initiate/payments',
+    callBack: payments,
   },
 };
 Object.values(route).forEach(function (values) {

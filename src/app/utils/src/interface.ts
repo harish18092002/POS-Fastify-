@@ -17,3 +17,9 @@ export interface ITaxInterface {
   taxType: 'GST' | 'VAT';
   taxAmount: string;
 }
+
+export interface IPaymentsInterface {
+  orderId: string;
+  totalAmount: string;
+  status: 'PENDING' | 'COMPLETED' | 'CANCELLED' | 'REFUNDED';
+}

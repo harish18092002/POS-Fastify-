@@ -4,10 +4,10 @@ import { ascending, reverseNumber, wordsCheck } from '../../../app/test';
 import { problems } from '../../Problems/prblms';
 
 export function itemValidator(data: IOrderInterface) {
-  problems();
-  ascending();
-  wordsCheck();
-  reverseNumber();
+  // problems();
+  // ascending();
+  // wordsCheck();
+  // reverseNumber();
   data.item.forEach((items) => {
     validators(items);
     if (
