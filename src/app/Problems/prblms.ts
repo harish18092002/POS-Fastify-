@@ -788,3 +788,56 @@ else {
   const j = Math.floor(input5.length / 2);
   console.log(input5.slice(j, j + 1));
 }
+// Problem 7
+
+// Given a list of integers, determine whether the sum of its elements is odd
+//  or even.
+
+// Give your answer as a string matching "odd" or "even".
+
+// If the input array is empty consider it as: [0] (array with a zero).
+
+// Examples:
+// Input: [0]
+// Output: "even"
+
+// Input: [0, 1, 4]
+// Output: "odd"
+
+// Input: [0, -1, -5]
+// Output: "even"
+// Have fun!
+
+const arr = [0, -1, 5];
+const total6 = arr.reduce((cur, prev) => cur + prev, 0);
+if (total6 % 2 === 0) console.log('even');
+else console.log('odd');
+
+// Problem 8
+
+// Nathan loves cycling.
+
+// Because Nathan knows it is important to stay hydrated, he drinks 0.5
+// litres of water per hour of cycling.
+
+// You get given the time in hours and you need to return the number of litres
+//  Nathan will drink, rounded to the smallest value.
+
+// For example:
+
+// time = 3 ----> litres = 1
+
+// time = 6.7---> litres = 3
+
+// time = 11.8--> litres = 5
+
+export function litres(time: number): number {
+  let lit = 0;
+  for (let i = 1; i <= time; i++) lit += 0.5;
+  return Math.floor(lit);
+}
+const time = 11.8;
+let lit = 0;
+for (let i = 1; i <= time; i++) lit += 0.5;
+console.log(Math.floor(lit));
+console.log(Math.round(Math.pow(0.5, time)));
