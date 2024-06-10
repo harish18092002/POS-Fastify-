@@ -44,3 +44,16 @@ enum taxType {
   GST
   VAT
 }
+
+model payments {
+  orderId       String        @id @map("order_Id")
+  totalAmount   String        @map("total_Amount")
+  paymentStatus paymentStatus @map("payment_Status")
+}
+
+enum paymentStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
