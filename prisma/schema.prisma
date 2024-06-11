@@ -45,10 +45,18 @@ enum taxType {
   VAT
 }
 
-model payments {
+model paymentsTransaction {
   orderId       String        @map("order_id")
   paymentStatus paymentStatus @map("payment_status")
-  paymentId     String        @id @map("payment_id")
+  paymentId     String        @map("payment_id")
+  createdAt     DateTime      @id @default(now()) @map("created_at")
+}
+
+model completedPayments {
+  orderId       String        @map("order_id")
+  paymentStatus paymentStatus @map("payment_status")
+  paymentId     String        @map("payment_id")
+  createdAt     DateTime      @id @default(now()) @map("created_at")
 }
 
 enum paymentStatus {

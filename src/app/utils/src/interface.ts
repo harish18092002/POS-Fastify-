@@ -19,6 +19,7 @@ export interface ITaxInterface {
 }
 
 export interface IPaymentsInterface {
+  paymentId: string;
   orderId: string;
   totalAmount: string;
   paymentStatus: 'PENDING' | 'COMPLETED' | 'CANCELLED' | 'REFUNDED';

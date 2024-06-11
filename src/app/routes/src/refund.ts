@@ -1,6 +1,11 @@
 import { payments } from '@prisma/client';
 import { prismaClientAssign } from '../../prismaPlugin/index';
-import { IPaymentsInterface, TResponse, orderIdValidators } from '../../utils';
+import {
+  IPaymentsInterface,
+  TResponse,
+  orderIdValidators,
+  paymentIdValidators,
+} from '../../utils';
 import { generateID } from '@jetit/id';
 
 export async function refund(
@@ -8,12 +13,11 @@ export async function refund(
 ): Promise<TResponse<payments>> {
   const ps = prismaClientAssign();
   try {
-    orderIdValidators(data.orderId);
-
+    paymentIdValidators(data.paymentId);
     const [paymentDetails, orderDetails] = await ps.$transaction([
       ps.payments.findMany({
         where: {
-          orderId: data.orderId,
+          paymentId: data.paymentId,
         },
       }),
       ps.orderDetails.findFirst({
@@ -23,10 +27,10 @@ export async function refund(
       }),
     ]);
 
-    if (!orderDetails) {
+    if (!paymentDetails) {
       return {
         data: null,
-        message: 'Incorrect Order ID',
+        message: 'Incorrect Payment ID',
         status: 'ERROR',
       };
     }
@@ -60,11 +64,10 @@ export async function refund(
       };
     }
 
-    const paymentId = generateID('HEX', '04');
     const refundPayment = await ps.payments.create({
       data: {
-        paymentId: paymentId,
-        orderId: data.orderId,
+        paymentId: data.paymentId,
+        orderId: paymentDetails[0].orderId,
         paymentStatus: 'REFUNDED',
       },
     });

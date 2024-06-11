@@ -2,12 +2,10 @@ import { payments } from '@prisma/client';
 import {
   IPaymentsInterface,
   TResponse,
-  orderIdValidators,
-  paymentStatusValidator,
-  stringValidators,
+  paymentIdValidators,
+  paymentValidator,
 } from '../../utils';
 import { prismaClientAssign } from '../../prismaPlugin';
-import { generateID } from '@jetit/id';
 
 export async function payments(
   data: IPaymentsInterface
@@ -15,38 +13,31 @@ export async function payments(
   const ps = prismaClientAssign();
 
   try {
-    // Validators
-    paymentStatusValidator(data);
-    orderIdValidators(data.orderId);
+    paymentValidator(data);
+    paymentIdValidators(data.paymentId);
+    const details = await ps.payments.findMany({
+      where: {
+        paymentId: data.paymentId,
+      },
+    });
 
-    const details = await ps.$transaction([
-      ps.orderDetails.findFirst({
-        where: {
-          orderId: data.orderId,
-        },
-      }),
-      ps.payments.findMany({
-        where: {
-          orderId: data.orderId,
-        },
-      }),
-    ]);
-
-    if (!details[0]) {
+    if (!details) {
       return {
         data: null,
-        message: 'Incorrect Order ID',
+        message: 'Incorrect Payment ID',
         status: 'ERROR',
       };
     }
 
-    const existingPayments = details[1];
+    const existingPayments = details;
+    let paymentId = '';
     console.log(existingPayments);
     let isRefunded = false;
     let isCompleted = false;
     let isPending = false;
 
     for (let i = 0; i < existingPayments.length; i++) {
+      paymentId = existingPayments[0].paymentId;
       if (existingPayments[i].paymentStatus === 'REFUNDED') {
         isRefunded = true;
       } else if (existingPayments[i].paymentStatus === 'COMPLETED') {
@@ -72,17 +63,16 @@ export async function payments(
       };
     }
 
-    const paymentId = generateID('HEX', '04');
     const initiatePayments = await ps.payments.create({
       data: {
-        orderId: data.orderId,
+        orderId: details[0].orderId,
         paymentStatus: data.paymentStatus,
         paymentId: paymentId,
       },
     });
 
     return {
-      data: initiatePayments,
+      data: { paymentId: paymentId },
       message: 'Payment has been ' + data.paymentStatus,
       status: 'SUCCESS',
     };

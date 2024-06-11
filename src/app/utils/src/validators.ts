@@ -6,12 +6,11 @@ import {
 } from './interface';
 import { ascending, reverseNumber, wordsCheck } from '../../../app/test';
 import { problems } from '../../Problems/prblms';
-
+// problems();
+// ascending();
+// wordsCheck();
+// reverseNumber();
 export function itemValidator(data: IOrderInterface) {
-  // problems();
-  // ascending();
-  // wordsCheck();
-  // reverseNumber();
   data.item.forEach((items) => {
     validators(items);
     if (
@@ -85,8 +84,8 @@ export function stringValidators(data: string) {
     data.trim().length > 0
   );
 }
-export function paymentStatusValidator(data: IPaymentsInterface) {
-  const mandatorKeys = ['orderId', 'paymentStatus'];
+export function paymentValidator(data: IPaymentsInterface) {
+  const mandatorKeys = ['paymentId', 'paymentStatus'];
   const userKeys = Object.keys(data);
   const missingKeys = [];
   for (let i = 0; i < mandatorKeys.length; i++) {
@@ -101,4 +100,12 @@ export function paymentStatusValidator(data: IPaymentsInterface) {
   }
   if (missingKeys.length > 0)
     throw new Error(missingKeys.join(',') + ' is mandatory');
+}
+
+export function paymentIdValidators(paymentId: string) {
+  try {
+    validateId(paymentId, 'HEX', '04');
+  } catch (error) {
+    throw new Error('Enter a valid payment ID');
+  }
 }
