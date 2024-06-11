@@ -41,6 +41,7 @@ export async function payments(
     }
 
     const existingPayments = details[1];
+    console.log(existingPayments);
     let isRefunded = false;
     let isCompleted = false;
     let isPending = false;
