@@ -1,4 +1,4 @@
-import { payments } from '@prisma/client';
+import { paymentStatus, paymentsHistory } from '@prisma/client';
 import { prismaClientAssign } from '../../prismaPlugin/index';
 import {
   IPaymentsInterface,
@@ -6,18 +6,15 @@ import {
   orderIdValidators,
   paymentIdValidators,
 } from '../../utils';
-import { generateID } from '@jetit/id';
 
-export async function refund(
-  data: IPaymentsInterface
-): Promise<TResponse<payments>> {
+export async function refund(data: any): Promise<TResponse<paymentsHistory>> {
   const ps = prismaClientAssign();
   try {
-    paymentIdValidators(data.paymentId);
+    orderIdValidators(data.orderId);
     const [paymentDetails, orderDetails] = await ps.$transaction([
-      ps.payments.findMany({
+      ps.paymentsHistory.findMany({
         where: {
-          paymentId: data.paymentId,
+          orderId: data.orderId,
         },
       }),
       ps.orderDetails.findFirst({
@@ -36,6 +33,7 @@ export async function refund(
     }
 
     const totalAmount = orderDetails.totalAmount;
+    let completedPayments = [];
     let isRefunded = false;
     let isCompleted = false;
 
@@ -44,10 +42,10 @@ export async function refund(
         isRefunded = true;
       }
       if (payment.paymentStatus === 'COMPLETED') {
+        completedPayments.push(payment.paymentId);
         isCompleted = true;
       }
     }
-
     if (isRefunded) {
       return {
         data: null,
@@ -63,17 +61,23 @@ export async function refund(
         status: 'ERROR',
       };
     }
-
-    const refundPayment = await ps.payments.create({
-      data: {
-        paymentId: data.paymentId,
-        orderId: paymentDetails[0].orderId,
-        paymentStatus: 'REFUNDED',
-      },
-    });
-
+    const arr = [];
+    for (let i = 0; i < completedPayments.length; i++) {
+      arr.push(
+        ps.paymentsHistory.create({
+          data: {
+            amount: data.amount,
+            paymentId: completedPayments[i],
+            orderId: data.orderId,
+            paymentStatus: 'REFUNDED',
+          },
+        })
+      );
+    }
+    await ps.$transaction(arr);
+    console.log(arr);
     return {
-      data: refundPayment,
+      data: null,
       message: `The total amount to be refunded is ${totalAmount}`,
       status: 'SUCCESS',
     };

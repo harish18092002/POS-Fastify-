@@ -45,18 +45,28 @@ enum taxType {
   VAT
 }
 
-model paymentsTransaction {
+model paymentsHistory {
+  sNo           Int           @id @default(autoincrement())
   orderId       String        @map("order_id")
+  amount        String
   paymentStatus paymentStatus @map("payment_status")
   paymentId     String        @map("payment_id")
-  createdAt     DateTime      @id @default(now()) @map("created_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
 }
 
-model completedPayments {
+model paymentsTransaction {
+  transactionId String        @id @map("transaction_id")
   orderId       String        @map("order_id")
+  amount        String
+  paymentType   paymentType   @map("payment_type")
   paymentStatus paymentStatus @map("payment_status")
   paymentId     String        @map("payment_id")
-  createdAt     DateTime      @id @default(now()) @map("created_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+}
+
+enum paymentType {
+  FULL
+  PARTIAL
 }
 
 enum paymentStatus {
@@ -64,4 +74,5 @@ enum paymentStatus {
   COMPLETED
   CANCELLED
   REFUNDED
+  PARTIAL
 }

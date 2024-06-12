@@ -62,7 +62,6 @@ export async function updateOrder(
       return item.itemId;
     });
     const filteredId = itemId.filter((x) => x !== undefined);
-
     const existingItem = await ps.item.findMany({
       where: {
         itemId: { in: filteredId },

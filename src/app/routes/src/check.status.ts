@@ -1,4 +1,4 @@
-import { payments } from '@prisma/client';
+import { paymentsHistory } from '@prisma/client';
 import {
   IPaymentsInterface,
   TResponse,
@@ -8,11 +8,11 @@ import { prismaClientAssign } from '../../prismaPlugin';
 
 export async function checkPaymentStatus(
   data: IPaymentsInterface
-): Promise<TResponse<payments>> {
+): Promise<TResponse<paymentsHistory>> {
   const ps = prismaClientAssign();
   try {
     paymentIdValidators(data.paymentId);
-    const details = await ps.payments.findMany({
+    const details = await ps.paymentsHistory.findMany({
       where: {
         paymentId: data.paymentId,
       },
