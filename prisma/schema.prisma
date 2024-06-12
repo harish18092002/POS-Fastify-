@@ -46,11 +46,10 @@ enum taxType {
 }
 
 model paymentsHistory {
-  sNo           Int           @id @default(autoincrement())
   orderId       String        @map("order_id")
   amount        String
   paymentStatus paymentStatus @map("payment_status")
-  paymentId     String        @map("payment_id")
+  paymentId     String        @id @map("payment_id")
   createdAt     DateTime      @default(now()) @map("created_at")
 }
 

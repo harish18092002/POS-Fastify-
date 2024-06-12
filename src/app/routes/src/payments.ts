@@ -73,42 +73,84 @@ export async function payments(
       (sum, payment) => sum + parseInt(payment.amount),
       0
     );
+    if (totalPaid === totalAmount)
+      return {
+        data: null,
+        message: 'Payment already completed for this order in partial order',
+        status: 'ERROR',
+      };
 
     const newTotalPaid = totalPaid + parseInt(paymentDetails.amount);
-
     const remainingAmount = totalAmount - totalPaid;
-    console.log({ totalPaid, remainingAmount });
+
+    if (newTotalPaid > totalAmount)
+      return {
+        data: null,
+        message: `Payment is greater than the total order amount and amount to be paid is : ${remainingAmount}`,
+        status: 'ERROR',
+      };
+    console.log({ totalPaid, remainingAmount, newTotalPaid });
     console.log(parseInt(paymentDetails.amount));
     if (
-      parseInt(paymentDetails.amount) <= remainingAmount ||
+      parseInt(paymentDetails.amount) < remainingAmount ||
       parseInt(paymentDetails.amount) < totalAmount
     ) {
       const partialPaymentId = generateID('HEX', '04');
-      await ps.paymentsHistory.create({
-        data: {
-          paymentId: partialPaymentId,
-          orderId: paymentDetails.orderId,
-          amount: paymentDetails.amount,
-          paymentStatus: 'PARTIAL',
-        },
-      });
+      if (parseInt(paymentDetails.amount) + totalPaid === totalAmount) {
+        await ps.$transaction([
+          ps.paymentsHistory.create({
+            data: {
+              paymentId: partialPaymentId,
+              orderId: paymentDetails.orderId,
+              amount: paymentDetails.amount,
+              paymentStatus: 'PARTIAL',
+            },
+          }),
+          ps.paymentsTransaction.create({
+            data: {
+              transactionId: generateID('HEX', '05'),
+              orderId: paymentDetails.orderId,
+              amount: paymentDetails.amount,
+              paymentType: 'PARTIAL',
+              paymentStatus: 'COMPLETED',
+              paymentId: partialPaymentId,
+            },
+          }),
+        ]);
 
-      await ps.paymentsTransaction.create({
-        data: {
-          transactionId: generateID('HEX', '05'),
-          orderId: paymentDetails.orderId,
-          amount: paymentDetails.amount,
-          paymentType: 'PARTIAL',
-          paymentStatus: 'PARTIAL',
-          paymentId: partialPaymentId,
-        },
-      });
+        return {
+          data: { paymentId: partialPaymentId },
+          message: `Partial payment initiated for amount: ${paymentDetails.amount} and all payments for this order has been completed`,
+          status: 'SUCCESS',
+        };
+      } else {
+        await ps.$transaction([
+          ps.paymentsHistory.create({
+            data: {
+              paymentId: partialPaymentId,
+              orderId: paymentDetails.orderId,
+              amount: paymentDetails.amount,
+              paymentStatus: 'PARTIAL',
+            },
+          }),
+          ps.paymentsTransaction.create({
+            data: {
+              transactionId: generateID('HEX', '05'),
+              orderId: paymentDetails.orderId,
+              amount: paymentDetails.amount,
+              paymentType: 'PARTIAL',
+              paymentStatus: 'PARTIAL',
+              paymentId: partialPaymentId,
+            },
+          }),
+        ]);
 
-      return {
-        data: { paymentId: partialPaymentId },
-        message: `Partial payment initiated for amount: ${paymentDetails.amount}`,
-        status: 'SUCCESS',
-      };
+        return {
+          data: { paymentId: partialPaymentId },
+          message: `Partial payment initiated for amount: ${paymentDetails.amount}`,
+          status: 'SUCCESS',
+        };
+      }
     } else if (newTotalPaid === totalAmount) {
       const completedPaymentId = generateID('HEX', '04');
       await ps.paymentsHistory.create({

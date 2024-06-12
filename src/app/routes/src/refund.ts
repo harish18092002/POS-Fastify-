@@ -6,13 +6,14 @@ import {
   orderIdValidators,
   paymentIdValidators,
 } from '../../utils';
+import { generateID } from '@jetit/id';
 
 export async function refund(data: any): Promise<TResponse<paymentsHistory>> {
   const ps = prismaClientAssign();
   try {
     orderIdValidators(data.orderId);
     const [paymentDetails, orderDetails] = await ps.$transaction([
-      ps.paymentsHistory.findMany({
+      ps.paymentsTransaction.findMany({
         where: {
           orderId: data.orderId,
         },
@@ -36,16 +37,22 @@ export async function refund(data: any): Promise<TResponse<paymentsHistory>> {
     let completedPayments = [];
     let isRefunded = false;
     let isCompleted = false;
+    let totalAmountPaid = 0;
 
     for (const payment of paymentDetails) {
       if (payment.paymentStatus === 'REFUNDED') {
         isRefunded = true;
       }
-      if (payment.paymentStatus === 'COMPLETED') {
+      if (
+        payment.paymentStatus === 'COMPLETED' ||
+        payment.paymentStatus === 'PARTIAL'
+      ) {
         completedPayments.push(payment.paymentId);
         isCompleted = true;
+        totalAmountPaid += parseInt(payment.amount);
       }
     }
+    console.log({ totalAmountPaid });
     if (isRefunded) {
       return {
         data: null,
@@ -66,8 +73,8 @@ export async function refund(data: any): Promise<TResponse<paymentsHistory>> {
       arr.push(
         ps.paymentsHistory.create({
           data: {
-            amount: data.amount,
-            paymentId: completedPayments[i],
+            amount: totalAmountPaid.toString(),
+            paymentId: generateID('HEX', '04'),
             orderId: data.orderId,
             paymentStatus: 'REFUNDED',
           },
@@ -78,7 +85,7 @@ export async function refund(data: any): Promise<TResponse<paymentsHistory>> {
     console.log(arr);
     return {
       data: null,
-      message: `The total amount to be refunded is ${totalAmount}`,
+      message: `The total amount to be refunded is ${totalAmountPaid}`,
       status: 'SUCCESS',
     };
   } catch (error) {
