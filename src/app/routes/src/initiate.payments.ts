@@ -15,7 +15,14 @@ export async function initiatePayments(
 
   try {
     orderIdValidators(data.orderId);
+    const entryId = generateID('HEX', '05');
+
     const details = await ps.orderDetails.findFirst({
+      where: {
+        orderId: data.orderId,
+      },
+    });
+    const paymentDetails = await ps.paymentsHistory.findFirst({
       where: {
         orderId: data.orderId,
       },
@@ -28,21 +35,41 @@ export async function initiatePayments(
         status: 'ERROR',
       };
     } else {
-      const paymentId = generateID('HEX', '04');
-      const newPayment = await ps.paymentsHistory.create({
-        data: {
-          amount: data.amount,
-          orderId: details.orderId,
-          paymentStatus: 'PENDING',
-          paymentId: paymentId,
-        },
-      });
+      if (!paymentDetails) {
+        const paymentId = generateID('HEX', '04');
 
-      return {
-        data: { paymentId: newPayment.paymentId },
-        message: 'Order payment has been initiated ',
-        status: 'SUCCESS',
-      };
+        const newPayment = await ps.paymentsHistory.create({
+          data: {
+            entryId: entryId,
+            amount: data.amount,
+            orderId: details.orderId,
+            paymentStatus: 'PENDING',
+            paymentId: paymentId,
+          },
+        });
+
+        return {
+          data: { paymentId: newPayment.paymentId },
+          message: 'Order payment has been initiated ',
+          status: 'SUCCESS',
+        };
+      } else {
+        const newPayment = await ps.paymentsHistory.create({
+          data: {
+            entryId: entryId,
+            amount: data.amount,
+            orderId: details.orderId,
+            paymentStatus: 'PENDING',
+            paymentId: paymentDetails.paymentId,
+          },
+        });
+
+        return {
+          data: { paymentId: newPayment.paymentId },
+          message: 'Order payment has been initiated ',
+          status: 'SUCCESS',
+        };
+      }
     }
   } catch (error) {
     return {

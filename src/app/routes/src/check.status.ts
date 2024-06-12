@@ -17,7 +17,7 @@ export async function checkPaymentStatus(
         paymentId: data.paymentId,
       },
     });
-
+    console.log(details);
     if (!details)
       return {
         data: null,
@@ -26,7 +26,7 @@ export async function checkPaymentStatus(
       };
 
     return {
-      data: details,
+      data: details[details.length - 1],
       message: 'Payment status has been fetched successfully',
       status: 'SUCCESS',
     };

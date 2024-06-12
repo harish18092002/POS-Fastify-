@@ -2,13 +2,16 @@ import { paymentStatus, paymentsHistory } from '@prisma/client';
 import { prismaClientAssign } from '../../prismaPlugin/index';
 import {
   IPaymentsInterface,
+  ITransactionInterface,
   TResponse,
   orderIdValidators,
   paymentIdValidators,
 } from '../../utils';
 import { generateID } from '@jetit/id';
 
-export async function refund(data: any): Promise<TResponse<paymentsHistory>> {
+export async function refund(
+  data: ITransactionInterface
+): Promise<TResponse<paymentsHistory>> {
   const ps = prismaClientAssign();
   try {
     orderIdValidators(data.orderId);
@@ -32,20 +35,19 @@ export async function refund(data: any): Promise<TResponse<paymentsHistory>> {
         status: 'ERROR',
       };
     }
-
-    const totalAmount = orderDetails.totalAmount;
     let completedPayments = [];
     let isRefunded = false;
     let isCompleted = false;
     let totalAmountPaid = 0;
-
+    let paymentId = '';
     for (const payment of paymentDetails) {
+      paymentId = payment.paymentId;
       if (payment.paymentStatus === 'REFUNDED') {
         isRefunded = true;
       }
       if (
-        payment.paymentStatus === 'COMPLETED' ||
-        payment.paymentStatus === 'PARTIAL'
+        payment.paymentStatus === 'FULLY_COMPLETED' ||
+        payment.paymentStatus === 'PARTIAL_COMPLETED'
       ) {
         completedPayments.push(payment.paymentId);
         isCompleted = true;
@@ -69,12 +71,14 @@ export async function refund(data: any): Promise<TResponse<paymentsHistory>> {
       };
     }
     const arr = [];
+
     for (let i = 0; i < completedPayments.length; i++) {
       arr.push(
         ps.paymentsHistory.create({
           data: {
+            entryId: generateID('HEX', '05'),
             amount: totalAmountPaid.toString(),
-            paymentId: generateID('HEX', '04'),
+            paymentId: paymentId,
             orderId: data.orderId,
             paymentStatus: 'REFUNDED',
           },

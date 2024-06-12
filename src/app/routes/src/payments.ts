@@ -16,8 +16,9 @@ export async function payments(
   try {
     paymentValidator(data);
     paymentIdValidators(data.paymentId);
+    const entryId = generateID('HEX', '05');
 
-    const paymentDetails = await ps.paymentsHistory.findFirst({
+    const paymentDetails = await ps.paymentsHistory.findMany({
       where: {
         paymentId: data.paymentId,
       },
@@ -33,7 +34,7 @@ export async function payments(
 
     const orderDetails = await ps.orderDetails.findFirst({
       where: {
-        orderId: paymentDetails.orderId,
+        orderId: paymentDetails[paymentDetails.length - 1].orderId,
       },
     });
 
@@ -45,12 +46,18 @@ export async function payments(
       };
     }
 
+    if (data.paymentStatus === 'CANCELLED')
+      return {
+        data: null,
+        message: 'Payment has been cancelled successfully',
+        status: 'ERROR',
+      };
     const totalAmount = parseInt(orderDetails.totalAmount);
 
     const completedPayment = await ps.paymentsHistory.findFirst({
       where: {
-        orderId: paymentDetails.orderId,
-        paymentStatus: 'COMPLETED',
+        orderId: paymentDetails[paymentDetails.length - 1].orderId,
+        paymentStatus: 'FULLY_COMPLETED',
       },
     });
 
@@ -64,8 +71,8 @@ export async function payments(
 
     const existingPartialPayments = await ps.paymentsHistory.findMany({
       where: {
-        orderId: paymentDetails.orderId,
-        paymentStatus: 'PARTIAL',
+        orderId: paymentDetails[paymentDetails.length - 1].orderId,
+        paymentStatus: 'PARTIAL_COMPLETED',
       },
     });
 
@@ -80,74 +87,81 @@ export async function payments(
         status: 'ERROR',
       };
 
-    const newTotalPaid = totalPaid + parseInt(paymentDetails.amount);
+    const newTotalPaid =
+      totalPaid + parseInt(paymentDetails[paymentDetails.length - 1].amount);
     const remainingAmount = totalAmount - totalPaid;
 
-    if (newTotalPaid > totalAmount)
+    if (newTotalPaid > totalAmount) {
       return {
         data: null,
         message: `Payment is greater than the total order amount and amount to be paid is : ${remainingAmount}`,
         status: 'ERROR',
       };
-    console.log({ totalPaid, remainingAmount, newTotalPaid });
-    console.log(parseInt(paymentDetails.amount));
+    }
+    let paymentDetailsAmount = 0;
+    for (let i = 0; i < paymentDetails.length; i++) {
+      paymentDetailsAmount = parseInt(paymentDetails[i].amount);
+    }
     if (
-      parseInt(paymentDetails.amount) < remainingAmount ||
-      parseInt(paymentDetails.amount) < totalAmount
+      paymentDetailsAmount < remainingAmount ||
+      paymentDetailsAmount < totalAmount
     ) {
-      const partialPaymentId = generateID('HEX', '04');
-      if (parseInt(paymentDetails.amount) + totalPaid === totalAmount) {
+      if (paymentDetailsAmount + totalPaid === totalAmount) {
         await ps.$transaction([
           ps.paymentsHistory.create({
             data: {
-              paymentId: partialPaymentId,
-              orderId: paymentDetails.orderId,
-              amount: paymentDetails.amount,
-              paymentStatus: 'PARTIAL',
+              entryId: entryId,
+              paymentId: data.paymentId,
+              orderId: paymentDetails[paymentDetails.length - 1].orderId,
+              amount: paymentDetails[paymentDetails.length - 1].amount,
+              paymentStatus: 'FULLY_COMPLETED',
             },
           }),
           ps.paymentsTransaction.create({
             data: {
               transactionId: generateID('HEX', '05'),
-              orderId: paymentDetails.orderId,
-              amount: paymentDetails.amount,
-              paymentType: 'PARTIAL',
-              paymentStatus: 'COMPLETED',
-              paymentId: partialPaymentId,
+              orderId: paymentDetails[paymentDetails.length - 1].orderId,
+              amount: paymentDetails[paymentDetails.length - 1].amount,
+              paymentStatus: 'FULLY_COMPLETED',
+              paymentId: data.paymentId,
             },
           }),
         ]);
 
         return {
-          data: { paymentId: partialPaymentId },
-          message: `Partial payment initiated for amount: ${paymentDetails.amount} and all payments for this order has been completed`,
+          data: { paymentId: data.paymentId },
+          message: `Partial payment initiated for amount: ${
+            paymentDetails[paymentDetails.length - 1].amount
+          } and all payments for this order has been completed`,
           status: 'SUCCESS',
         };
       } else {
         await ps.$transaction([
           ps.paymentsHistory.create({
             data: {
-              paymentId: partialPaymentId,
-              orderId: paymentDetails.orderId,
-              amount: paymentDetails.amount,
-              paymentStatus: 'PARTIAL',
+              entryId: entryId,
+              paymentId: data.paymentId,
+              orderId: paymentDetails[paymentDetails.length - 1].orderId,
+              amount: paymentDetails[paymentDetails.length - 1].amount,
+              paymentStatus: 'PARTIAL_COMPLETED',
             },
           }),
           ps.paymentsTransaction.create({
             data: {
               transactionId: generateID('HEX', '05'),
-              orderId: paymentDetails.orderId,
-              amount: paymentDetails.amount,
-              paymentType: 'PARTIAL',
-              paymentStatus: 'PARTIAL',
-              paymentId: partialPaymentId,
+              orderId: paymentDetails[paymentDetails.length - 1].orderId,
+              amount: paymentDetails[paymentDetails.length - 1].amount,
+              paymentStatus: 'PARTIAL_COMPLETED',
+              paymentId: data.paymentId,
             },
           }),
         ]);
 
         return {
-          data: { paymentId: partialPaymentId },
-          message: `Partial payment initiated for amount: ${paymentDetails.amount}`,
+          data: { paymentId: data.paymentId },
+          message: `Partial payment initiated for amount: ${
+            paymentDetails[paymentDetails.length - 1].amount
+          }`,
           status: 'SUCCESS',
         };
       }
@@ -155,20 +169,21 @@ export async function payments(
       const completedPaymentId = generateID('HEX', '04');
       await ps.paymentsHistory.create({
         data: {
+          entryId: entryId,
+
           paymentId: completedPaymentId,
-          orderId: paymentDetails.orderId,
-          amount: paymentDetails.amount,
-          paymentStatus: 'COMPLETED',
+          orderId: paymentDetails[paymentDetails.length - 1].orderId,
+          amount: paymentDetails[paymentDetails.length - 1].amount,
+          paymentStatus: 'FULLY_COMPLETED',
         },
       });
 
       await ps.paymentsTransaction.create({
         data: {
           transactionId: generateID('HEX', '05'),
-          orderId: paymentDetails.orderId,
-          amount: paymentDetails.amount,
-          paymentType: 'FULL',
-          paymentStatus: 'COMPLETED',
+          orderId: paymentDetails[paymentDetails.length - 1].orderId,
+          amount: paymentDetails[paymentDetails.length - 1].amount,
+          paymentStatus: 'FULLY_COMPLETED',
           paymentId: completedPaymentId,
         },
       });

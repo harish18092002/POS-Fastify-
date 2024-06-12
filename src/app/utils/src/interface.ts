@@ -22,13 +22,24 @@ export interface IPaymentsInterface {
   paymentId: string;
   orderId: string;
   totalAmount: string;
-  paymentStatus: 'PENDING' | 'COMPLETED' | 'CANCELLED' | 'REFUNDED' | 'PARTIAL';
+  paymentStatus:
+    | 'PENDING'
+    | 'PARTIAL_COMPLETED'
+    | 'FULLY_COMPLETED'
+    | 'CANCELLED'
+    | 'REFUNDED'
+    | 'PARTIAL';
 }
 export interface ITransactionInterface {
   transactionId: string;
-  paymentType: 'FULL' | 'PARTIAL';
   paymentId: string;
   orderId: string;
   amount: string;
-  paymentStatus: 'COMPLETED';
+  paymentStatus:
+    | 'PENDING'
+    | 'PARTIAL_COMPLETED'
+    | 'FULLY_COMPLETED'
+    | 'CANCELLED'
+    | 'REFUNDED'
+    | 'PARTIAL';
 }
