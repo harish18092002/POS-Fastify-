@@ -57,21 +57,16 @@ model paymentsTransaction {
   transactionId String        @id @map("transaction_id")
   orderId       String        @map("order_id")
   amount        String
-  paymentType   paymentType   @map("payment_type")
   paymentStatus paymentStatus @map("payment_status")
   paymentId     String        @map("payment_id")
   createdAt     DateTime      @default(now()) @map("created_at")
 }
 
-enum paymentType {
-  FULL
-  PARTIAL
-}
-
 enum paymentStatus {
   PENDING
+  PARTIAL
+  FULL
   COMPLETED
   CANCELLED
   REFUNDED
-  PARTIAL
 }
