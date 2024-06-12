@@ -9,6 +9,7 @@ import {
   refund,
   initiatePayments,
   checkPaymentStatus,
+  getOrderPayments,
 } from './routes';
 
 export const fastify = Fastify();
@@ -45,6 +46,10 @@ const route: Record<string, Record<string, any>> = {
   checkPaymentStatus: {
     url: '/payment/status',
     callBack: checkPaymentStatus,
+  },
+  getOrderPayments: {
+    url: '/get/order/payments',
+    callBack: getOrderPayments,
   },
 };
 Object.values(route).forEach(function (values) {

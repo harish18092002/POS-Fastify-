@@ -166,12 +166,10 @@ export async function payments(
         };
       }
     } else if (newTotalPaid === totalAmount) {
-      const completedPaymentId = generateID('HEX', '04');
       await ps.paymentsHistory.create({
         data: {
           entryId: entryId,
-
-          paymentId: completedPaymentId,
+          paymentId: data.paymentId,
           orderId: paymentDetails[paymentDetails.length - 1].orderId,
           amount: paymentDetails[paymentDetails.length - 1].amount,
           paymentStatus: 'FULLY_COMPLETED',
@@ -184,12 +182,12 @@ export async function payments(
           orderId: paymentDetails[paymentDetails.length - 1].orderId,
           amount: paymentDetails[paymentDetails.length - 1].amount,
           paymentStatus: 'FULLY_COMPLETED',
-          paymentId: completedPaymentId,
+          paymentId: data.paymentId,
         },
       });
 
       return {
-        data: { paymentId: completedPaymentId },
+        data: { paymentId: data.paymentId },
         message: `Payment completed successfully for total order amount`,
         status: 'SUCCESS',
       };

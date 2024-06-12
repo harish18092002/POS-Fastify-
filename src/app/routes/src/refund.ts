@@ -1,11 +1,9 @@
-import { paymentStatus, paymentsHistory } from '@prisma/client';
+import { paymentsHistory } from '@prisma/client';
 import { prismaClientAssign } from '../../prismaPlugin/index';
 import {
-  IPaymentsInterface,
   ITransactionInterface,
   TResponse,
   orderIdValidators,
-  paymentIdValidators,
 } from '../../utils';
 import { generateID } from '@jetit/id';
 
@@ -16,7 +14,7 @@ export async function refund(
   try {
     orderIdValidators(data.orderId);
     const [paymentDetails, orderDetails] = await ps.$transaction([
-      ps.paymentsTransaction.findMany({
+      ps.paymentsHistory.findMany({
         where: {
           orderId: data.orderId,
         },
@@ -40,11 +38,13 @@ export async function refund(
     let isCompleted = false;
     let totalAmountPaid = 0;
     let paymentId = '';
+    let count = 0;
     for (const payment of paymentDetails) {
       paymentId = payment.paymentId;
       if (payment.paymentStatus === 'REFUNDED') {
         isRefunded = true;
       }
+      if (payment.paymentStatus === 'FULLY_COMPLETED') count++;
       if (
         payment.paymentStatus === 'FULLY_COMPLETED' ||
         payment.paymentStatus === 'PARTIAL_COMPLETED'
@@ -54,7 +54,13 @@ export async function refund(
         totalAmountPaid += parseInt(payment.amount);
       }
     }
-    console.log({ totalAmountPaid });
+    if (count === 0) {
+      return {
+        data: null,
+        message: 'Payment can be refunded only if full payment is completed',
+        status: 'ERROR',
+      };
+    }
     if (isRefunded) {
       return {
         data: null,
@@ -62,7 +68,6 @@ export async function refund(
         status: 'ERROR',
       };
     }
-
     if (!isCompleted) {
       return {
         data: null,
@@ -70,23 +75,17 @@ export async function refund(
         status: 'ERROR',
       };
     }
-    const arr = [];
 
-    for (let i = 0; i < completedPayments.length; i++) {
-      arr.push(
-        ps.paymentsHistory.create({
-          data: {
-            entryId: generateID('HEX', '05'),
-            amount: totalAmountPaid.toString(),
-            paymentId: paymentId,
-            orderId: data.orderId,
-            paymentStatus: 'REFUNDED',
-          },
-        })
-      );
-    }
-    await ps.$transaction(arr);
-    console.log(arr);
+    await ps.paymentsHistory.create({
+      data: {
+        entryId: generateID('HEX', '05'),
+        amount: totalAmountPaid.toString(),
+        paymentId: paymentId,
+        orderId: data.orderId,
+        paymentStatus: 'REFUNDED',
+      },
+    });
+
     return {
       data: null,
       message: `The total amount to be refunded is ${totalAmountPaid}`,
