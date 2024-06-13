@@ -80,6 +80,7 @@ export async function payments(
       (sum, payment) => sum + parseInt(payment.amount),
       0
     );
+
     if (totalPaid === totalAmount)
       return {
         data: null,
