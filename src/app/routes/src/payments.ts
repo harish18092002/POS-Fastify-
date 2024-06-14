@@ -87,7 +87,6 @@ export async function payments(
         message: 'Payment already completed for this order in partial order',
         status: 'ERROR',
       };
-
     const newTotalPaid =
       totalPaid + parseInt(paymentDetails[paymentDetails.length - 1].amount);
     const remainingAmount = totalAmount - totalPaid;
