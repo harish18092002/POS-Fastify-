@@ -11,6 +11,7 @@ export async function createOrder(
   const arr = [];
   try {
     itemValidator(data);
+    console.debug('Called the create order with data: ', data);
     const itemId = generateID('HEX', '02');
     const totalSum = data.item.reduce((acc, item) => {
       const itemTotal = parseFloat(item.amount) * parseFloat(item.quantity);
