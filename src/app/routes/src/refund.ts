@@ -33,6 +33,7 @@ export async function refund(
         status: 'ERROR',
       };
     }
+
     let completedPayments = [];
     let isRefunded = false;
     let isCompleted = false;
