@@ -13,18 +13,11 @@ export async function refund(
   const ps = prismaClientAssign();
   try {
     orderIdValidators(data.orderId);
-    const [paymentDetails, orderDetails] = await ps.$transaction([
-      ps.paymentsHistory.findMany({
-        where: {
-          orderId: data.orderId,
-        },
-      }),
-      ps.orderDetails.findFirst({
-        where: {
-          orderId: data.orderId,
-        },
-      }),
-    ]);
+    const paymentDetails = await ps.paymentsHistory.findMany({
+      where: {
+        orderId: data.orderId,
+      },
+    });
 
     if (!paymentDetails) {
       return {
