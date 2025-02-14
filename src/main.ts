@@ -10,6 +10,7 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 // Start listening.
 fastify.listen({ port, host }, (err) => {
   if (err) {
+    console.log(err, 'Server is not running');
     fastify.log.error(err);
     process.exit(1);
   } else {
